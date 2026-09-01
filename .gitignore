@@ -1,0 +1,48 @@
+.DS_Store
+
+# Local secrets and signing material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+*.cer
+*.crt
+*.der
+*.keystore
+*.jks
+credentials.*
+secrets.*
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Node / website
+node_modules/
+packages/website/.next/
+packages/website/tsconfig.tsbuildinfo
+npm-debug.log*
+
+# Local build artifacts
+dist/
+
+# Local generated data and experiments
+data/
+tools/**/data/
+tools/**/artifacts/
+tools/**/logs/
+__pycache__/
+*.py[cod]
+*.mlmodelc/
+
+# Xcode user state
+*.xcuserdata/
+DerivedData/
+
+# Signing/export artifacts
+*.ipa
+*.dSYM

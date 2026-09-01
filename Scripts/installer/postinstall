@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_PATH="/Applications/StowPaste.app"
+AUTH_URL="x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+EXECUTABLE="$APP_PATH/Contents/MacOS/StowPaste"
+accessibilityStatus=1
+
+if [[ -d "$APP_PATH" ]]; then
+  open -a "/Applications/StowPaste.app" || true
+fi
+
+if [[ -x "$EXECUTABLE" ]]; then
+  STOWPASTE_CHECK_ACCESSIBILITY_ONLY=1 "$EXECUTABLE" >/dev/null 2>&1 && accessibilityStatus=0
+fi
+
+if [[ "$accessibilityStatus" -eq 0 ]]; then
+  exit 0
+fi
+
+/usr/bin/osascript <<OSA || true
+set dialogResult to display dialog "StowPaste 已安装到应用程序文件夹。是否现在打开辅助功能授权设置？" buttons {"稍后", "打开授权"} default button "打开授权" with icon note
+if button returned of dialogResult is "打开授权" then
+  open location "$AUTH_URL"
+end if
+OSA
+
+exit 0

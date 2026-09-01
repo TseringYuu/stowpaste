@@ -1,0 +1,25 @@
+{
+  "name": "stowpaste-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local-first macOS clipboard history utility and its official website.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TseringYuu/stowpaste.git"
+  },
+  "homepage": "https://stowpaste.aiware.store",
+  "bugs": {
+    "url": "https://github.com/TseringYuu/stowpaste/issues"
+  },
+  "workspaces": [
+    "packages/website"
+  ],
+  "scripts": {
+    "app:build": "swift build --package-path packages/app",
+    "website:dev": "npm --workspace @stowpaste/website run dev",
+    "website:build": "npm --workspace @stowpaste/website run build",
+    "website:lint": "npm --workspace @stowpaste/website run lint",
+    "verify": "Scripts/verify_all.sh"
+  }
+}
