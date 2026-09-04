@@ -34,7 +34,7 @@ require_source() {
 reject_repo_text() {
   local pattern="$1"
   local message="$2"
-  if grep -R -n -E "$pattern" "$ROOT/.github" "$ROOT/README.md" "$ROOT/README.en.md" "$ROOT/docs" "$ROOT/CONTRIBUTING.md" 2>/dev/null; then
+  if grep -R -n -E "$pattern" "$ROOT/.github" "$ROOT/README.md" "$ROOT/README.zh-CN.md" "$ROOT/docs" "$ROOT/CONTRIBUTING.md" 2>/dev/null; then
     echo "Unexpected: $message" >&2
     exit 1
   fi
@@ -47,7 +47,7 @@ reject_path "Package.swift" "root Swift package manifest"
 reject_path "Sources/StowPaste/StowPaste.swift" "root Swift source"
 reject_path "Resources/AppIcon.icns" "root app icon resources"
 require_path "README.md" "README"
-require_path "README.en.md" "English README"
+require_path "README.zh-CN.md" "Chinese README"
 require_path "docs/DEVELOPMENT.md" "developer documentation"
 require_path "LICENSE" "license"
 require_path "CONTRIBUTING.md" "open-source contributing guide"
