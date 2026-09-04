@@ -22,8 +22,10 @@ require_file_source() {
 
 require_file_source "$BUILD_APP" 'BUILD_ARCHS=\$\{STOWPASTE_BUILD_ARCHS:-"arm64 x86_64"\}' 'normal app builds default to universal arm64 and x86_64'
 require_file_source "$BUILD_APP" 'for arch in \$BUILD_ARCHS' 'normal app builds pass each requested architecture to SwiftPM'
-require_file_source "$BUILD_APP" 'SWIFT_ARCH_FLAGS\+=\(--arch "\$arch"\)' 'normal app build uses SwiftPM architecture flags'
-require_file_source "$BUILD_APP" 'BUILD_DIR="\$BUILD_PATH/apple/Products/Release"' 'normal app build copies the universal binary emitted by SwiftPM'
+require_file_source "$BUILD_APP" 'ARCH_BUILD_PATH="\$BUILD_PATH/architectures/\$arch"' 'normal app builds isolate each architecture slice'
+require_file_source "$BUILD_APP" '--arch "\$arch"' 'normal app build uses SwiftPM architecture flags'
+require_file_source "$BUILD_APP" 'ARCH_BINARIES\+=\("\$ARCH_BINARY"\)' 'normal app build collects every compiled architecture slice'
+require_file_source "$BUILD_APP" 'lipo -create "\$\{ARCH_BINARIES\[@\]\}" -output "\$MACOS_DIR/\$APP_NAME"' 'normal app build merges slices into a universal executable'
 require_file_source "$BUILD_DMG" 'DMG_LOCALE="\$\{1:-en\}"' 'DMG build accepts an explicit locale and defaults to English'
 require_file_source "$BUILD_DMG" '\$\{DISPLAY_NAME\}-v\$\{APP_VERSION\}\.dmg' 'English DMG uses the default versioned artifact name'
 require_file_source "$BUILD_DMG" '\$\{DISPLAY_NAME\}-v\$\{APP_VERSION\}-zh-CN\.dmg' 'Chinese DMG uses a locale-qualified artifact name'
