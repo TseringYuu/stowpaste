@@ -141,6 +141,10 @@ npm run website:build
 
 维护说明见 [开发文档](docs/DEVELOPMENT.md)、[安全策略](SECURITY.md) 与 [更新日志](CHANGELOG.md)。
 
+## 社区与友链
+
+- [LINUX DO](https://linux.do) — 本开源项目已与 LINUX DO 社区建立友链，并认可其开放讨论、真诚分享与共同建设的社区精神。
+
 ## 开源许可
 
 StowPaste 以 [Apache License 2.0](LICENSE) 开源。你可以使用、修改、分发和商业使用本项目，但必须保留适用的版权、许可证和 NOTICE 声明。第三方组件仍受其各自许可证约束，详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

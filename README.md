@@ -141,6 +141,10 @@ npm run website:build
 
 Maintainer references: [Development Guide](docs/DEVELOPMENT.md), [Security Policy](SECURITY.md), and [Changelog](CHANGELOG.md).
 
+## Community
+
+- [LINUX DO](https://linux.do) — This open-source project recognizes LINUX DO and maintains a community link with it, in support of open discussion, sincere sharing, and collaborative building.
+
 ## License
 
 StowPaste is open source under the [Apache License 2.0](LICENSE). You may use, modify, distribute, and commercially use the project while retaining applicable copyright, license, and NOTICE statements. Third-party components remain under their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
