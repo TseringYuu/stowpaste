@@ -22,7 +22,7 @@
 </div>
 
 > [!IMPORTANT]
-> ### [↓ 下载 StowPaste v0.1.0（DMG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg)
+> ### [↓ 下载 StowPaste v0.1.0（中文 DMG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0-zh-CN.dmg)
 > 适用于 macOS 14 或更高版本，兼容 Apple silicon 与 Intel Mac。无需账户。
 
 <p align="center">
@@ -32,7 +32,7 @@
   &nbsp;·&nbsp;
   <a href="https://stowpaste.aiware.store/privacy">隐私说明</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg.sha256">SHA-256</a>
+  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0-zh-CN.dmg.sha256">SHA-256</a>
 </p>
 
 ![StowPaste 官网与下载界面](docs/assets/readme-hero.png)
@@ -56,7 +56,7 @@
 
 ## 安装
 
-1. 下载并打开 [StowPaste v0.1.0 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg)。
+1. 下载并打开 [StowPaste v0.1.0 中文 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0-zh-CN.dmg)。
 2. 将 `StowPaste.app` 拖到磁盘映像中的「应用程序」快捷方式上。
 3. 从「应用程序」启动 StowPaste；macOS 可能提示无法验证开发者。
 4. 打开「系统设置 → 隐私与安全性」，向下滚动到「安全性」，为 StowPaste 选择「仍要打开」，并按提示确认身份。
@@ -73,13 +73,13 @@
 下载官方校验文件，或在终端执行：
 
 ```bash
-shasum -a 256 StowPaste-v0.1.0.dmg
+shasum -a 256 StowPaste-v0.1.0-zh-CN.dmg
 ```
 
 预期 SHA-256：
 
 ```text
-977b1906fae33f9af1ce56e84a1dc6cd2bf5269d630a6ebe1612f59124eeace4
+802ab228f5dc24ad388af90a9ebf48b5d936a088ade3e9d636652dfbf3bb68bf
 ```
 
 </details>

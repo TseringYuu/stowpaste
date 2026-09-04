@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Script from "next/script";
 import { InstallGuide } from "@/components/install-guide";
+import { LocalizedDownloadLink } from "@/components/localized-download";
 import { SeoJsonLd } from "@/components/seo-json-ld";
 import { SiteHeader } from "@/components/site-header";
 import { features, site } from "@/lib/site";
@@ -34,13 +35,17 @@ export default function HomePage() {
                 Press Command twice, choose an earlier copy, and paste it back.
               </p>
 
-              <a className="download-cta js-organize-trigger" href={site.downloadUrl}>
+              <LocalizedDownloadLink
+                className="download-cta js-organize-trigger"
+                englishHref={site.downloadUrl}
+                chineseHref={site.downloadUrlZhCN}
+              >
                 <span className="download-cta-copy">
                   <strong>Download DMG</strong>
                   <small>{site.versionTag} · {site.minimumSystemVersion}</small>
                 </span>
                 <span className="download-cta-arrow" aria-hidden="true">↓</span>
-              </a>
+              </LocalizedDownloadLink>
               <div className="release-disclosure" role="note">
                 <span><b aria-hidden="true">!</b> OPEN SOURCE BUILD</span>
                 <small>Not Apple-notarized.</small>

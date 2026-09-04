@@ -34,8 +34,8 @@ require_website_text() {
 }
 
 require_repo_text "README.zh-CN.md" 'docs/assets/readme-hero\.png' 'Chinese README includes the current product preview'
-require_repo_text "README.zh-CN.md" 'StowPaste v0\.1\.0（DMG）' 'Chinese README has a prominent versioned download action'
-require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0\.dmg' 'Chinese README links the published release DMG'
+require_repo_text "README.zh-CN.md" 'StowPaste v0\.1\.0（中文 DMG）' 'Chinese README has a prominent localized download action'
+require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0-zh-CN\.dmg' 'Chinese README links the published Chinese DMG'
 require_repo_text "README.zh-CN.md" 'macOS 14' 'Chinese README documents the minimum macOS version'
 require_repo_text "README.zh-CN.md" 'Apple silicon.*Intel' 'Chinese README documents the universal architecture'
 require_repo_text "README.zh-CN.md" '不需要账户' 'Chinese README states that no account is required'
@@ -68,9 +68,12 @@ require_website_text "components/site-header.tsx" 'privacyUrl' 'site header link
 require_website_text "components/install-guide.tsx" 'OPEN SOURCE / NOT NOTARIZED' 'website discloses missing Apple notarization before installation'
 require_website_text "components/install-guide.tsx" 'Open Anyway' 'website explains the per-app Gatekeeper exception'
 require_website_text "components/install-guide.tsx" 'checksumSha256' 'website publishes the disk image checksum'
+require_website_text "components/localized-download.tsx" 'navigator\.languages' 'website selects a DMG using the browser language'
+require_website_text "lib/site.ts" 'downloadUrlZhCN' 'website exposes the Chinese DMG URL'
 require_website_text "app/privacy/page.tsx" 'StowPaste privacy' 'website includes privacy page'
 require_website_text "app/api/downloads/route.ts" 'versionTag' 'downloads API exposes a version tag'
 require_website_text "app/api/downloads/route.ts" 'type: "dmg"' 'downloads API exposes the DMG artifact'
+require_website_text "app/api/downloads/route.ts" 'locale: "zh-CN"' 'downloads API exposes the Chinese DMG locale'
 if grep -Eq 'appStoreUrl|artifacts: \["app-store"\]' "$WEBSITE_PACKAGE_DIR/app/api/downloads/route.ts"; then
   echo "Unexpected: downloads API still references the unavailable App Store" >&2
   exit 1

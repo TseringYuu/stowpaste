@@ -1,4 +1,5 @@
 import { site } from "@/lib/site";
+import { LocalizedChecksum, LocalizedDownloadLink } from "@/components/localized-download";
 
 const steps = [
   {
@@ -51,11 +52,18 @@ export function InstallGuide() {
         <div className="integrity-ticket">
           <div className="checksum-block">
             <span>SHA-256 / {site.versionTag}</span>
-            <code>{site.checksumSha256}</code>
+            <LocalizedChecksum english={site.checksumSha256} chinese={site.checksumSha256ZhCN} />
           </div>
           <div className="install-guide-actions">
-            <a className="install-download" href={site.downloadUrl}>Download DMG <span aria-hidden="true">↓</span></a>
-            <a href={site.checksumUrl}>Checksum file</a>
+            <LocalizedDownloadLink
+              className="install-download"
+              englishHref={site.downloadUrl}
+              chineseHref={site.downloadUrlZhCN}
+            >Download DMG <span aria-hidden="true">↓</span></LocalizedDownloadLink>
+            <LocalizedDownloadLink
+              englishHref={site.checksumUrl}
+              chineseHref={site.checksumUrlZhCN}
+            >Checksum file</LocalizedDownloadLink>
             <a href={site.githubUrl} target="_blank" rel="noreferrer">Review source</a>
             <a href={site.appleOpenAnywayUrl} target="_blank" rel="noreferrer">Apple&apos;s guide</a>
           </div>

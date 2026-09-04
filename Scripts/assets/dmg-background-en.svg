@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="640" viewBox="0 0 800 640">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="8" dy="8" stdDeviation="0" flood-color="#17181c"/>
+    </filter>
+  </defs>
+  <rect width="800" height="640" fill="#f4f1e8"/>
+  <path d="M0 0h800v58H0z" fill="#655dff"/>
+  <text x="32" y="37" fill="#fff" font-family="Helvetica Neue, sans-serif" font-size="16" font-weight="800" letter-spacing="1.8">STOWPASTE / INSTALL v0.1.0</text>
+  <text x="768" y="37" text-anchor="end" fill="#fff" font-family="Menlo, monospace" font-size="11" font-weight="700">macOS 14+ · UNIVERSAL</text>
+  <text x="400" y="104" text-anchor="middle" fill="#17181c" font-family="Helvetica Neue, sans-serif" font-size="26" font-weight="900">DRAG TO INSTALL</text>
+  <text x="400" y="132" text-anchor="middle" fill="#5c5d62" font-family="Helvetica Neue, sans-serif" font-size="14">Drag StowPaste to Applications</text>
+  <path d="M322 221h146" fill="none" stroke="#17181c" stroke-width="5" stroke-linecap="square"/>
+  <path d="M452 204l22 17-22 17" fill="none" stroke="#17181c" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/>
+  <rect x="375" y="207" width="27" height="28" fill="#9ff5e0" stroke="#17181c" stroke-width="3" transform="rotate(-5 388 221)"/>
+  <g filter="url(#shadow)">
+    <rect x="32" y="334" width="736" height="298" fill="#17181c" stroke="#17181c" stroke-width="3"/>
+    <rect x="32" y="334" width="736" height="58" fill="#ff6846" stroke="#17181c" stroke-width="3"/>
+  </g>
+  <text x="52" y="360" fill="#17181c" font-family="Helvetica Neue, sans-serif" font-size="17" font-weight="900">BLOCKED ON FIRST OPEN?</text>
+  <text x="52" y="381" fill="#17181c" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700">System Settings → Privacy &amp; Security → Open Anyway</text>
+  <rect x="72" y="414" width="656" height="180" rx="10" fill="#242426" stroke="#ffffff" stroke-opacity="0.2" stroke-width="2"/>
+  <rect x="88" y="430" width="184" height="148" rx="7" fill="#1e1e20"/>
+  <rect x="99" y="463" width="162" height="34" rx="7" fill="#0878e8"/>
+  <text x="113" y="455" fill="#a8a8ad" font-family="Helvetica Neue, sans-serif" font-size="11">Lock Screen</text>
+  <text x="113" y="485" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-size="12" font-weight="700">Privacy &amp; Security</text>
+  <text x="113" y="521" fill="#a8a8ad" font-family="Helvetica Neue, sans-serif" font-size="11">Login Password</text>
+  <text x="113" y="548" fill="#a8a8ad" font-family="Helvetica Neue, sans-serif" font-size="11">Users &amp; Groups</text>
+  <text x="298" y="446" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-size="16" font-weight="800">Security</text>
+  <rect x="298" y="462" width="412" height="86" rx="10" fill="#303033"/>
+  <text x="316" y="489" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-size="12" font-weight="700">“StowPaste.app” was blocked to protect your Mac.</text>
+  <text x="316" y="527" fill="#a8a8ad" font-family="Helvetica Neue, sans-serif" font-size="10">Review the source and checksum before continuing.</text>
+  <rect x="590" y="502" width="104" height="32" rx="5" fill="#454549" stroke="#ff4937" stroke-width="4"/>
+  <text x="642" y="522" text-anchor="middle" fill="#ffffff" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="800">Open Anyway</text>
+  <text x="400" y="620" text-anchor="middle" fill="#d7d7d2" font-family="Helvetica Neue, sans-serif" font-size="11" font-weight="700">Create an exception only for StowPaste · Never disable Gatekeeper</text>
+</svg>

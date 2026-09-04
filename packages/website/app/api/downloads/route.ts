@@ -12,8 +12,15 @@ export function GET() {
     artifacts: [
       {
         type: "dmg",
+        locale: "en",
         url: `${site.url}${site.downloadUrl}`,
         checksumUrl: `${site.url}${site.checksumUrl}`
+      },
+      {
+        type: "dmg",
+        locale: "zh-CN",
+        url: `${site.url}${site.downloadUrlZhCN}`,
+        checksumUrl: `${site.url}${site.checksumUrlZhCN}`
       }
     ]
   });

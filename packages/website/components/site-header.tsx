@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { GitHubLink } from "@/components/github-link";
+import { LocalizedDownloadLink } from "@/components/localized-download";
 import { site } from "@/lib/site";
 
 export function SiteHeader() {
@@ -23,11 +24,15 @@ export function SiteHeader() {
         <Link href={site.docsUrl}>Guide</Link>
         <Link href={site.privacyUrl}>Privacy</Link>
         <GitHubLink />
-        <a className="header-download js-organize-trigger" href={site.downloadUrl}>
+        <LocalizedDownloadLink
+          className="header-download js-organize-trigger"
+          englishHref={site.downloadUrl}
+          chineseHref={site.downloadUrlZhCN}
+        >
           <span>Download DMG</span>
           <small>{site.versionTag}</small>
           <b aria-hidden="true">↓</b>
-        </a>
+        </LocalizedDownloadLink>
       </nav>
     </header>
   );

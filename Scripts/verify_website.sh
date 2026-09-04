@@ -37,7 +37,11 @@ require_text "app/layout.tsx" 'metadataBase' "SEO metadata base"
 require_text "app/layout.tsx" 'openGraph' "OpenGraph metadata"
 require_text "app/layout.tsx" 'twitter' "Twitter card metadata"
 require_text "components/seo-json-ld.tsx" 'SoftwareApplication' "software JSON-LD"
-require_text "app/page.tsx" 'href=\{site\.downloadUrl\}' "homepage DMG download action"
+require_text "app/page.tsx" 'LocalizedDownloadLink' "homepage has a browser-localized DMG download action"
+require_text "components/localized-download.tsx" 'navigator\.languages' "download locale follows the browser's preferred language"
+require_text "components/localized-download.tsx" '\^zh' "Chinese browser locales select the Chinese DMG"
+require_text "lib/site.ts" 'downloadUrlZhCN' "website publishes a Chinese DMG URL"
+require_text "lib/site.ts" 'checksumSha256ZhCN' "website publishes the Chinese DMG checksum"
 require_text "app/page.tsx" 'Download DMG' "homepage explicit download label"
 require_text "app/page.tsx" 'data-paper-field' "homepage WebGL paper field"
 require_text "components/site-header.tsx" 'GitHubLink' "header includes the GitHub repository entry"
@@ -60,6 +64,8 @@ fi
 
 require_file "public/downloads/StowPaste-v0.1.0.dmg" "current DMG download artifact"
 require_file "public/downloads/StowPaste-v0.1.0.dmg.sha256" "current DMG checksum"
+require_file "public/downloads/StowPaste-v0.1.0-zh-CN.dmg" "current Chinese DMG download artifact"
+require_file "public/downloads/StowPaste-v0.1.0-zh-CN.dmg.sha256" "current Chinese DMG checksum"
 if [[ -e "$WEBSITE_PACKAGE_DIR/public/downloads/StowPaste-v0.1.0.pkg" ]]; then
   echo "Unexpected: retired PKG remains in the website download directory" >&2
   exit 1

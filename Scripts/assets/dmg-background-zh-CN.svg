@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="640" viewBox="0 0 800 640">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="8" dy="8" stdDeviation="0" flood-color="#17181c"/>
+    </filter>
+    <clipPath id="shot">
+      <rect x="72" y="405" width="656" height="194" rx="8"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="640" fill="#f4f1e8"/>
+  <path d="M0 0h800v58H0z" fill="#655dff"/>
+  <text x="32" y="37" fill="#fff" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="16" font-weight="800" letter-spacing="1.8">STOWPASTE / INSTALL v0.1.0</text>
+  <text x="768" y="37" text-anchor="end" fill="#fff" font-family="Menlo, PingFang SC, monospace" font-size="11" font-weight="700">macOS 14+ · UNIVERSAL</text>
+
+  <text x="400" y="104" text-anchor="middle" fill="#17181c" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="26" font-weight="900">拖动安装</text>
+  <text x="400" y="132" text-anchor="middle" fill="#5c5d62" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="14">将 StowPaste 拖到“应用程序”</text>
+
+  <path d="M322 221h146" fill="none" stroke="#17181c" stroke-width="5" stroke-linecap="square"/>
+  <path d="M452 204l22 17-22 17" fill="none" stroke="#17181c" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/>
+  <rect x="375" y="207" width="27" height="28" fill="#9ff5e0" stroke="#17181c" stroke-width="3" transform="rotate(-5 388 221)"/>
+  <g filter="url(#shadow)">
+    <rect x="32" y="334" width="736" height="298" fill="#17181c" stroke="#17181c" stroke-width="3"/>
+    <rect x="32" y="334" width="736" height="58" fill="#ff6846" stroke="#17181c" stroke-width="3"/>
+  </g>
+  <text x="52" y="360" fill="#17181c" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="17" font-weight="900">首次打开被阻止？</text>
+  <text x="52" y="381" fill="#17181c" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="11" font-weight="700">系统设置 → 隐私与安全性 → 仍要打开</text>
+
+  <image x="72" y="405" width="656" height="194" preserveAspectRatio="xMidYMid slice" xlink:href="dmg-open-anyway-zh.png" clip-path="url(#shot)"/>
+  <rect x="72" y="405" width="656" height="194" rx="8" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+  <text x="400" y="620" text-anchor="middle" fill="#d7d7d2" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="11" font-weight="700">只为 StowPaste 创建例外 · 请勿关闭 Gatekeeper</text>
+</svg>

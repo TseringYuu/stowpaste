@@ -81,6 +81,8 @@ Interactive elements have visible hover, pressed, and focus-visible states. Focu
 
 The release disclosure sits directly beneath the primary download action and states that the open-source build is not Apple-notarized before the user downloads it. A second-screen installation card explains dragging the app from the DMG to Applications and the one-app `Open Anyway` flow, publishes the checksum, and links the source and Apple guidance. It uses the same opaque paper, hard rules, mono metadata, and offset print shadow as the hero instead of introducing a generic warning banner or modal.
 
+The release provides separate English and Chinese DMG Finder windows. The website selects the Chinese artifact when the browser's primary language starts with `zh`; every other language and the no-JavaScript fallback receive English. Each window positions the StowPaste app opposite the Applications shortcut with a direct drag arrow. The Chinese window embeds a real macOS Privacy & Security screenshot and preserves the highlighted `仍要打开` control. The English window presents the corresponding `Privacy & Security → Open Anyway` path in English.
+
 ### Navigation and data display
 
 The WebGL paper fragments visibly encode the supported clipboard world: text, images, files, links, code, colors, and masked credentials. Feature content remains present as semantic screen-reader content on the homepage. Guide and privacy navigation remains text-based and direct.

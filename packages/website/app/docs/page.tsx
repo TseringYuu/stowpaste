@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ClipboardSidebar } from "@/components/clipboard-sidebar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { LocalizedDownloadLink } from "@/components/localized-download";
 import { docs, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -92,7 +93,11 @@ export default function DocsPage() {
               </article>
             ))}
             <div className="doc-actions">
-              <a className="download-button" href={site.downloadUrl}>Download {site.versionTag}</a>
+              <LocalizedDownloadLink
+                className="download-button"
+                englishHref={site.downloadUrl}
+                chineseHref={site.downloadUrlZhCN}
+              >Download {site.versionTag}</LocalizedDownloadLink>
               <Link className="secondary-button" href={site.privacyUrl}>Read privacy details</Link>
             </div>
             <SiteFooter />

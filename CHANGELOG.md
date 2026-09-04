@@ -9,6 +9,8 @@ All notable changes to StowPaste are documented here. This project follows seman
 - Made the website and installation guide explicitly disclose that `v0.1.0` is not Developer ID signed or Apple-notarized.
 - Added the macOS `Open Anyway` path, published checksum, source-review link, and Apple guidance alongside the download.
 - Changed the primary direct-distribution format from PKG to a drag-to-Applications DMG.
+- Added separate English and Chinese Finder installation windows, selected from the browser's primary language on the website.
+- Added a real Chinese macOS Privacy & Security screenshot and matching localized `Open Anyway` guidance.
 - Added a cache-busting download URL so previously cached release artifacts are not reused.
 
 ## [0.1.0] - 2026-09-01
