@@ -343,11 +343,18 @@ button { font: inherit; }
   --mint: #9ff5e0;
   position: relative;
   width: 100%;
-  height: 100dvh;
-  min-height: 650px;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: clip;
   background: var(--field);
   isolation: isolate;
+}
+
+.paper-stage {
+  position: relative;
+  height: 100dvh;
+  min-height: 720px;
+  overflow: hidden;
+  background: var(--field);
 }
 
 .paper-field {
@@ -366,6 +373,7 @@ button { font: inherit; }
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: 100%;
+  height: 100%;
   min-height: 100%;
   pointer-events: none;
 }
@@ -479,6 +487,24 @@ button { font: inherit; }
 .is-organized .organize-hint i { background: #2ab067; }
 .is-organized .organize-hint { color: #2b7145; }
 
+.release-disclosure {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  margin-top: 17px;
+  padding-top: 12px;
+  border-top: 1px dashed #a5a8a2;
+  color: #555a62;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+}
+.release-disclosure > span { display: inline-flex; align-items: center; gap: 6px; color: var(--graphite); font-weight: 800; letter-spacing: 0.03em; }
+.release-disclosure b { display: grid; place-items: center; width: 17px; height: 17px; border: 1px solid var(--graphite); background: var(--signal); color: var(--graphite); font-size: 0.66rem; }
+.release-disclosure small { min-width: 0; font-size: inherit; }
+.release-disclosure a { color: var(--field); font-weight: 800; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.release-disclosure a:hover { color: #3c35be; }
+
 .command-sequence {
   position: absolute;
   z-index: 4;
@@ -525,6 +551,79 @@ button { font: inherit; }
   pointer-events: auto;
 }
 
+.install-guide {
+  position: relative;
+  z-index: 3;
+  scroll-margin-top: 18px;
+  padding: clamp(48px, 8vw, 110px) clamp(16px, 6vw, 88px);
+  border-top: 2px solid var(--graphite);
+  background: var(--field);
+  color: var(--graphite);
+}
+
+.install-sheet {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  border: 2px solid var(--graphite);
+  background: var(--paper);
+  box-shadow: 14px 14px 0 var(--graphite);
+}
+
+.install-sheet-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 13px 18px;
+  border-bottom: 2px solid var(--graphite);
+  font-family: var(--mono);
+  font-size: 0.59rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.install-sheet-meta span:last-child { color: #a33020; }
+
+.install-guide-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(420px, 1.35fr);
+  gap: clamp(30px, 5vw, 74px);
+  padding: clamp(28px, 5vw, 64px);
+}
+
+.install-guide-intro { align-self: start; }
+.install-kicker { display: inline-block; padding: 6px 8px; border: 1px solid var(--graphite); background: var(--signal); font-family: var(--mono); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.08em; }
+.install-guide-intro h2 { max-width: 540px; margin: 20px 0 18px; font-family: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif; font-size: clamp(2.7rem, 5vw, 5.2rem); font-stretch: condensed; font-weight: 800; line-height: 0.88; letter-spacing: -0.055em; text-transform: uppercase; }
+.install-guide-intro p { margin: 0; color: #4f545c; font-size: 0.94rem; line-height: 1.65; }
+.install-guide-intro .install-trust-copy { margin-top: 14px; padding-top: 14px; border-top: 1px dashed #a5a8a2; color: var(--graphite); font-family: var(--mono); font-size: 0.68rem; line-height: 1.55; }
+
+.install-steps { display: grid; align-content: start; gap: 0; margin: 0; padding: 0; border-top: 2px solid var(--graphite); list-style: none; }
+.install-step { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 17px; align-items: start; padding: 20px 0; border-bottom: 2px solid var(--graphite); }
+.install-step-number { display: grid; place-items: center; width: 52px; height: 52px; border: 2px solid var(--graphite); background: #fff; box-shadow: 4px 4px 0 var(--mint); font-family: var(--mono); font-size: 0.75rem; font-weight: 900; }
+.install-step > span:last-child { display: grid; gap: 6px; }
+.install-step strong { font-size: 1rem; }
+.install-step small { color: #565b64; font-size: 0.8rem; line-height: 1.55; }
+
+.integrity-ticket {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  border-top: 2px solid var(--graphite);
+  background: var(--graphite);
+  color: #fff;
+}
+.checksum-block { display: grid; align-content: center; gap: 8px; min-width: 0; padding: 20px 24px; }
+.checksum-block span { color: var(--mint); font-family: var(--mono); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.08em; }
+.checksum-block code { overflow-wrap: anywhere; color: #fff; font-family: var(--mono); font-size: 0.67rem; line-height: 1.55; user-select: all; }
+.install-guide-actions { display: grid; grid-template-columns: repeat(2, minmax(128px, 1fr)); border-left: 2px solid var(--paper); }
+.install-guide-actions a { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 10px 14px; border-right: 1px solid #555860; border-bottom: 1px solid #555860; color: #fff; cursor: pointer; font-family: var(--mono); font-size: 0.61rem; font-weight: 800; }
+.install-guide-actions a:nth-child(2n) { border-right: 0; }
+.install-guide-actions a:nth-last-child(-n + 2) { border-bottom: 0; }
+.install-guide-actions a:hover { background: #2a2c32; color: var(--mint); }
+.install-guide-actions .install-download { background: var(--mint); color: var(--graphite); }
+.install-guide-actions .install-download:hover { background: #b8ffe9; color: var(--graphite); }
+
+.privacy-stamp { display: flex; align-items: baseline; gap: 14px; margin: 0; padding: 15px 18px; border-top: 2px solid var(--graphite); color: #5f646d; font-family: var(--mono); font-size: 0.62rem; line-height: 1.5; }
+.privacy-stamp strong { flex: 0 0 auto; color: var(--graphite); letter-spacing: 0.08em; }
+
 .no-webgl .paper-hero::before,
 .no-webgl .paper-hero::after {
   content: "PASSWORD  ••••••••••  /  IMAGE  Screenshot.png  /  FILE  Launch-notes.pdf";
@@ -543,7 +642,7 @@ button { font: inherit; }
 .no-webgl .paper-hero::after { right: 8%; bottom: 14%; transform: rotate(10deg); }
 
 @media (max-width: 760px) {
-  .paper-site { min-height: 620px; }
+  .paper-stage { min-height: 760px; }
   .paper-site .titlebar { grid-template-columns: auto 1fr; min-height: 60px; padding: 0 10px; }
   .paper-site .window-dots, .paper-site .titlebar-status { display: none; }
   .paper-site .brand img { width: 34px; height: 34px; border-radius: 8px; }
@@ -567,20 +666,36 @@ button { font: inherit; }
   .download-cta-copy strong { font-size: 1.08rem; }
   .download-cta-copy small { font-size: 0.53rem; }
   .download-cta-arrow { width: 43px; height: 43px; }
+  .release-disclosure { grid-template-columns: minmax(0, 1fr) auto; gap: 7px; font-size: 0.52rem; }
+  .release-disclosure small { display: none; }
   .organize-hint { margin-top: 13px; font-size: 0.54rem; }
   .edge-note { display: none; }
   .command-sequence { bottom: 12px; left: 12px; padding: 6px 8px; box-shadow: 3px 3px 0 var(--graphite); }
   .command-sequence > span { display: none; }
   .paper-footer { min-height: 34px; padding: 0 10px; }
   .paper-footer span:last-child { display: none; }
+  .install-guide { padding: 42px 14px 58px; }
+  .install-sheet { box-shadow: 8px 8px 0 var(--graphite); }
+  .install-sheet-meta { align-items: flex-start; flex-direction: column; gap: 5px; padding: 11px 13px; }
+  .install-guide-layout { grid-template-columns: 1fr; gap: 34px; padding: 28px 18px; }
+  .install-guide-intro h2 { font-size: clamp(2.7rem, 14vw, 4.2rem); }
+  .install-guide-intro p { font-size: 0.86rem; }
+  .install-step { grid-template-columns: 49px minmax(0, 1fr); gap: 14px; padding: 17px 0; }
+  .install-step-number { width: 44px; height: 44px; box-shadow: 3px 3px 0 var(--mint); }
+  .integrity-ticket { grid-template-columns: 1fr; }
+  .checksum-block { padding: 18px; }
+  .install-guide-actions { border-top: 2px solid var(--paper); border-left: 0; }
+  .privacy-stamp { align-items: flex-start; flex-direction: column; gap: 6px; padding: 14px; }
 }
 
 @media (max-height: 720px) and (min-width: 761px) {
+  .paper-stage { min-height: 690px; }
   .hero-label-card { width: min(600px, 64vw); padding: 22px 30px; }
   .hero-label-card h1 { margin-top: 22px; font-size: clamp(3.2rem, 6.7vw, 5.5rem); }
   .hero-label-card > p { margin-top: 16px; }
   .download-cta { min-height: 66px; margin-top: 19px; }
-  .organize-hint { margin-top: 11px; }
+  .release-disclosure { margin-top: 12px; padding-top: 9px; }
+  .organize-hint { margin-top: 9px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -588,5 +703,5 @@ button { font: inherit; }
 }
 
 @media (forced-colors: active) {
-  .paper-site, .hero-label-card, .download-cta, .command-sequence, .github-link, .paper-footer { forced-color-adjust: auto; }
+  .paper-site, .hero-label-card, .download-cta, .command-sequence, .github-link, .paper-footer, .release-disclosure, .install-sheet, .install-step-number, .integrity-ticket { forced-color-adjust: auto; }
 }

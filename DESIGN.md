@@ -79,6 +79,8 @@ Interactive elements have visible hover, pressed, and focus-visible states. Focu
 
 `Download PKG` is the unmistakable primary action in both the title bar and central label. The central action includes version and minimum macOS information, a mint download tile, a black field, and a coral offset shadow. Hover, keyboard focus, and touch also trigger the paper-organization state. The neighboring GitHub control is secondary and shows the repository's current public star count.
 
+The release disclosure sits directly beneath the primary download action and states that the open-source build is not Apple-notarized before the user downloads it. A second-screen installation receipt explains the one-app `Open Anyway` flow, publishes the checksum, and links the source and Apple guidance. It uses the same opaque paper, hard rules, mono metadata, and offset print shadow as the hero instead of introducing a generic warning banner or modal.
+
 ### Navigation and data display
 
 The WebGL paper fragments visibly encode the supported clipboard world: text, images, files, links, code, colors, and masked credentials. Feature content remains present as semantic screen-reader content on the homepage. Guide and privacy navigation remains text-based and direct.
@@ -98,6 +100,8 @@ Paper drift is continuous but slow, GPU-rendered, and non-interactive. Motion us
 ## Content voice
 
 Use direct product language: open, paste, favorite, pin, group, download. Do not describe removed capabilities, future promises, internal implementation, or edition names. Copy explains what the user can do now.
+
+Distribution trust copy is factual and visible: distinguish ad-hoc app signing, an unsigned installer, and missing Apple notarization without implying that open source alone guarantees safety. Lead users through the per-app macOS exception, source review, and checksum verification; never recommend disabling Gatekeeper globally.
 
 ## Accessibility and stability
 

@@ -7,12 +7,14 @@ export const site = {
   versionTag: "v0.1.0",
   minimumSystemVersion: "macOS 14 or later",
   architecture: "Apple silicon + Intel",
-  downloadUrl: "/downloads/StowPaste-v0.1.0.pkg",
+  downloadUrl: "/downloads/StowPaste-v0.1.0.pkg?build=e2e68684",
   checksumUrl: "/downloads/StowPaste-v0.1.0.pkg.sha256",
+  checksumSha256: "e2e68684bf979ad50ad2f36a3124b1e4d5052009bc1df7319d315a838b6728c7",
   privacyUrl: "/privacy",
   docsUrl: "/docs",
   githubUrl: "https://github.com/TseringYuu/stowpaste",
   githubApiUrl: "https://api.github.com/repos/TseringYuu/stowpaste",
+  appleOpenAnywayUrl: "https://support.apple.com/102445",
   githubStarsFallback: 0,
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "support@aiware.store"
 };

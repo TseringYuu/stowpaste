@@ -4,7 +4,11 @@ All notable changes to StowPaste are documented here. This project follows seman
 
 ## [Unreleased]
 
-No unreleased changes yet.
+### Changed
+
+- Made the website and installation guide explicitly disclose that `v0.1.0` is not Developer ID signed or Apple-notarized.
+- Added the macOS `Open Anyway` path, published checksum, source-review link, and Apple guidance alongside the download.
+- Added a cache-busting download URL so previously cached copies of the replaced early PKG are not reused.
 
 ## [0.1.0] - 2026-09-01
 

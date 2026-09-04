@@ -57,14 +57,15 @@
 ## Install
 
 1. Download the [StowPaste v0.1.0 PKG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.pkg).
-2. Open the installer and follow its steps, then launch StowPaste from Applications.
-3. Find the StowPaste icon in the menu bar.
-4. Grant Accessibility permission when prompted. If the settings page does not open automatically, go to System Settings → Privacy & Security → Accessibility and enable StowPaste.
+2. Open the installer once. macOS may say it cannot verify that the package is free of malware.
+3. Open System Settings → Privacy & Security, scroll to Security, and choose **Open Anyway** for StowPaste.
+4. Authenticate with your Mac password, finish the installer, then launch StowPaste from Applications.
+5. Grant Accessibility permission when prompted. If the settings page does not open automatically, go to System Settings → Privacy & Security → Accessibility and enable StowPaste.
 
 Accessibility permission lets StowPaste listen for the global shortcut, restore the previous input focus, and paste the selected item into the active app.
 
 > [!NOTE]
-> `v0.1.0` is an early direct-distribution build. The application uses an identity-free ad-hoc signature; the installer has not completed Developer ID Installer signing or Apple notarization. macOS may block it on first launch, so confirm the app under System Settings → Privacy & Security. A build signed with a different identity may also require Accessibility permission again.
+> `v0.1.0` is an independent open-source build that does not use a paid Apple Developer account. The application uses an identity-free ad-hoc signature; the installer is not Developer ID signed or notarized by Apple. Review the source and checksum before creating the one-app exception above. Never disable Gatekeeper globally. A build signed with a different identity may also require Accessibility permission again.
 
 <details>
 <summary><strong>Verify the installer</strong></summary>
@@ -82,6 +83,8 @@ e2e68684bf979ad50ad2f36a3124b1e4d5052009bc1df7319d315a838b6728c7
 ```
 
 </details>
+
+Technical users can also review and build StowPaste locally. See the [Development Guide](docs/DEVELOPMENT.md) for the required toolchain and verified commands.
 
 ## Use StowPaste
 
