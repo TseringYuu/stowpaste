@@ -12,6 +12,117 @@ final class CurrentBuildTests: XCTestCase {
         XCTAssertEqual(hotkey.displayText, "⌘ ⌘")
     }
 
+    func testCommandVRecordingProducesChord() {
+        var state = HotkeyRecordingState()
+
+        let hotkey = state.consume(
+            eventType: .keyDown,
+            keyCode: 0x09,
+            modifierFlags: [.command],
+            isRepeat: false,
+            timestamp: 1
+        )
+
+        XCTAssertEqual(
+            hotkey,
+            HotkeySettings(
+                keyCode: 0x09,
+                command: true,
+                option: false,
+                control: false,
+                shift: false,
+                doubleTap: false
+            )
+        )
+        XCTAssertEqual(hotkey?.displayText, "⌘V")
+    }
+
+    func testCommandStateFromFlagsChangedIsMergedIntoNextKeyDown() {
+        var state = HotkeyRecordingState()
+
+        XCTAssertNil(state.consume(
+            eventType: .flagsChanged,
+            keyCode: 0x37,
+            modifierFlags: [.command],
+            isRepeat: false,
+            timestamp: 1
+        ))
+        let hotkey = state.consume(
+            eventType: .keyDown,
+            keyCode: 0x09,
+            modifierFlags: [],
+            isRepeat: false,
+            timestamp: 1.1
+        )
+
+        XCTAssertEqual(hotkey?.keyCode, 0x09)
+        XCTAssertEqual(hotkey?.command, true)
+        XCTAssertEqual(hotkey?.doubleTap, false)
+        XCTAssertEqual(hotkey?.displayText, "⌘V")
+    }
+
+    func testKeyRepeatCannotBecomeDoubleTapShortcut() {
+        var state = HotkeyRecordingState()
+
+        XCTAssertNil(state.consume(
+            eventType: .keyDown,
+            keyCode: 0x09,
+            modifierFlags: [],
+            isRepeat: false,
+            timestamp: 1
+        ))
+        XCTAssertNil(state.consume(
+            eventType: .keyDown,
+            keyCode: 0x09,
+            modifierFlags: [],
+            isRepeat: true,
+            timestamp: 1.1
+        ))
+        XCTAssertNil(state.consume(
+            eventType: .keyDown,
+            keyCode: 0x09,
+            modifierFlags: [],
+            isRepeat: false,
+            timestamp: 1.2
+        ))
+    }
+
+    func testDoubleCommandRecordingRequiresReleaseBetweenPresses() {
+        var state = HotkeyRecordingState()
+
+        XCTAssertNil(state.consume(
+            eventType: .flagsChanged,
+            keyCode: 0x37,
+            modifierFlags: [.command],
+            isRepeat: false,
+            timestamp: 1
+        ))
+        XCTAssertNil(state.consume(
+            eventType: .flagsChanged,
+            keyCode: 0x37,
+            modifierFlags: [.command],
+            isRepeat: false,
+            timestamp: 1.1
+        ))
+        XCTAssertNil(state.consume(
+            eventType: .flagsChanged,
+            keyCode: 0x37,
+            modifierFlags: [],
+            isRepeat: false,
+            timestamp: 1.2
+        ))
+        let hotkey = state.consume(
+            eventType: .flagsChanged,
+            keyCode: 0x37,
+            modifierFlags: [.command],
+            isRepeat: false,
+            timestamp: 1.3
+        )
+
+        XCTAssertEqual(hotkey, .doubleTap(keyCode: 0x37))
+        XCTAssertEqual(hotkey?.displayText, "⌘ ⌘")
+    }
+
     func testLegacyRecommendationSettingsAreDropped() throws {
         let data = Data(#"{"smartRecommendationsEnabled":true,"keepImportantInformation":true}"#.utf8)
         let settings = try JSONDecoder().decode(AppSettings.self, from: data)

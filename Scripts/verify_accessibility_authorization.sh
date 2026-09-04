@@ -24,6 +24,13 @@ reject_source() {
 
 require_source 'openAccessibilityAuthorization\(\)' 'settings button opens the authorization destination'
 require_source 'x-apple\.systempreferences:com\.apple\.preference\.security\?Privacy_Accessibility' 'authorization opens the Accessibility pane'
+require_source 'NSWorkspace\.OpenConfiguration\(\)' 'authorization uses an activating workspace configuration'
+require_source 'configuration\.activates = true' 'authorization brings System Settings to the foreground'
+require_source 'applicationDidBecomeActive' 'authorization state refreshes after returning from System Settings'
+require_source 'refreshAccessibilityTrust\(' 'authorization state uses one refresh path'
+require_source 'accessibilityRepairHint' 'ad-hoc upgrades explain how to replace a stale authorization entry'
+require_source 'model\.accessibilityTrusted = AXIsProcessTrusted\(\)' 'event-tap installation failure preserves the actual system authorization state'
+require_source 'stopPermissionRetryTimer\(\)' 'authorization and event-tap retries stop only after monitoring is restored'
 require_source 'window\.setFrameAutosaveName\("StowPasteSettings"\)' 'settings window position is preserved after moving'
 require_source 'menuNeedsUpdate' 'status menu refreshes before opening'
 require_source 'if !model\.accessibilityTrusted' 'status menu hides the accessibility entry after authorization'

@@ -34,8 +34,8 @@ require_website_text() {
 }
 
 require_repo_text "README.zh-CN.md" 'docs/assets/readme-hero\.png' 'Chinese README includes the current product preview'
-require_repo_text "README.zh-CN.md" 'StowPaste v0\.1\.0（中文 DMG）' 'Chinese README has a prominent localized download action'
-require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0-zh-CN\.dmg' 'Chinese README links the published Chinese DMG'
+require_repo_text "README.zh-CN.md" 'StowPaste v0\.1\.1（中文 DMG）' 'Chinese README has a prominent localized download action'
+require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.1/StowPaste-v0\.1\.1-zh-CN\.dmg' 'Chinese README links the published Chinese DMG'
 require_repo_text "README.zh-CN.md" 'macOS 14' 'Chinese README documents the minimum macOS version'
 require_repo_text "README.zh-CN.md" 'Apple silicon.*Intel' 'Chinese README documents the universal architecture'
 require_repo_text "README.zh-CN.md" '不需要账户' 'Chinese README states that no account is required'
@@ -49,8 +49,8 @@ require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste|CO
 reject_repo_text "README.zh-CN.md" 'Mac App Store|apps\.apple\.com|Lite|智能推荐|翻译|OpenAI|chat/completions|API Key|Endpoint' 'Chinese README must not expose unavailable distribution channels or absent features'
 
 require_repo_text "README.md" 'docs/assets/readme-hero\.png' 'English README includes the current product preview'
-require_repo_text "README.md" 'Download StowPaste v0\.1\.0 \(DMG\)' 'English README has a prominent versioned download action'
-require_repo_text "README.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0\.dmg' 'English README links the published release DMG'
+require_repo_text "README.md" 'Download StowPaste v0\.1\.1 \(DMG\)' 'English README has a prominent versioned download action'
+require_repo_text "README.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.1/StowPaste-v0\.1\.1\.dmg' 'English README links the published release DMG'
 require_repo_text "README.md" 'macOS 14' 'English README documents the minimum macOS version'
 require_repo_text "README.md" 'Apple silicon.*Intel' 'English README documents the universal architecture'
 require_repo_text "README.md" 'requires no account' 'English README states that no account is required'

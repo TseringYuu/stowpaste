@@ -170,6 +170,18 @@ enum L10n {
     static var accessibilityGranted: String { text("辅助功能已授权", "Accessibility granted") }
     static var accessibilityRequired: String { text("需要辅助功能权限", "Accessibility required") }
     static var openAuthorization: String { text("打开授权", "Open Authorization") }
+    static var accessibilityRepairHint: String {
+        text(
+            "如果系统设置里已经开启，但这里仍显示未授权，请先删除旧的 StowPaste 条目，再点“+”重新选择 /Applications/StowPaste.app，随后退出并重新打开 StowPaste。",
+            "If System Settings already shows StowPaste as enabled, remove the old StowPaste entry, click “+” and add /Applications/StowPaste.app again, then quit and reopen StowPaste."
+        )
+    }
+    static var accessibilitySettingsOpenFailed: String {
+        text(
+            "无法打开辅助功能设置，请手动前往“系统设置 → 隐私与安全性 → 辅助功能”。",
+            "Could not open Accessibility settings. Open System Settings → Privacy & Security → Accessibility manually."
+        )
+    }
     static var basics: String { text("基础", "Basics") }
     static var historyLimit: String { text("历史上限", "History limit") }
     static var historyRetentionWeek: String { text("一周内", "Within one week") }
@@ -509,15 +521,20 @@ struct HotkeySettings: Codable, Equatable {
     }
 
     static func from(event: NSEvent) -> HotkeySettings? {
-        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        from(keyCode: event.keyCode, modifierFlags: event.modifierFlags)
+    }
+
+    static func from(keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags) -> HotkeySettings? {
+        let flags = modifierFlags.intersection(.deviceIndependentFlagsMask)
         let hasModifier = flags.contains(.command) || flags.contains(.option) || flags.contains(.control) || flags.contains(.shift)
         guard hasModifier else { return nil }
         return HotkeySettings(
-            keyCode: Int64(event.keyCode),
+            keyCode: Int64(keyCode),
             command: flags.contains(.command),
             option: flags.contains(.option),
             control: flags.contains(.control),
-            shift: flags.contains(.shift)
+            shift: flags.contains(.shift),
+            doubleTap: false
         )
     }
 
@@ -578,6 +595,104 @@ struct HotkeySettings: Codable, Equatable {
         case 0x3A, 0x3D: return "⌥"
         case 0x3B, 0x3E: return "⌃"
         default: return "#\(keyCode)"
+        }
+    }
+}
+
+struct HotkeyRecordingState {
+    private static let doubleTapInterval: TimeInterval = 0.65
+    private static let shortcutModifierMask: NSEvent.ModifierFlags = [.command, .option, .control, .shift]
+
+    private var heldModifierFlags: NSEvent.ModifierFlags = []
+    private var pressedKeyCodes: Set<UInt16> = []
+    private var pendingDoubleTap: (keyCode: UInt16, timestamp: TimeInterval)?
+
+    mutating func reset() {
+        heldModifierFlags = []
+        pressedKeyCodes = []
+        pendingDoubleTap = nil
+    }
+
+    mutating func consume(
+        eventType: NSEvent.EventType,
+        keyCode: UInt16,
+        modifierFlags: NSEvent.ModifierFlags,
+        isRepeat: Bool,
+        timestamp: TimeInterval
+    ) -> HotkeySettings? {
+        if eventType == .flagsChanged {
+            return consumeModifierChange(
+                keyCode: keyCode,
+                modifierFlags: modifierFlags,
+                timestamp: timestamp
+            )
+        }
+
+        if eventType == .keyUp {
+            pressedKeyCodes.remove(keyCode)
+            return nil
+        }
+
+        guard eventType == .keyDown, !isRepeat, !pressedKeyCodes.contains(keyCode) else {
+            return nil
+        }
+        pressedKeyCodes.insert(keyCode)
+
+        let effectiveFlags = modifierFlags
+            .union(heldModifierFlags)
+            .intersection(Self.shortcutModifierMask)
+        if let chord = HotkeySettings.from(keyCode: keyCode, modifierFlags: effectiveFlags) {
+            pendingDoubleTap = nil
+            return chord
+        }
+        return consumeDoubleTap(keyCode: keyCode, timestamp: timestamp)
+    }
+
+    private mutating func consumeModifierChange(
+        keyCode: UInt16,
+        modifierFlags: NSEvent.ModifierFlags,
+        timestamp: TimeInterval
+    ) -> HotkeySettings? {
+        guard let modifier = Self.modifierFlag(for: keyCode) else { return nil }
+        let isPressed = modifierFlags.contains(modifier)
+        if !isPressed {
+            heldModifierFlags.remove(modifier)
+            pressedKeyCodes.remove(keyCode)
+            return nil
+        }
+
+        heldModifierFlags.insert(modifier)
+        guard !pressedKeyCodes.contains(keyCode) else { return nil }
+        pressedKeyCodes.insert(keyCode)
+
+        let otherModifiers = heldModifierFlags
+            .subtracting(modifier)
+            .intersection(Self.shortcutModifierMask)
+        guard otherModifiers.isEmpty else {
+            pendingDoubleTap = nil
+            return nil
+        }
+        return consumeDoubleTap(keyCode: keyCode, timestamp: timestamp)
+    }
+
+    private mutating func consumeDoubleTap(keyCode: UInt16, timestamp: TimeInterval) -> HotkeySettings? {
+        if let pendingDoubleTap,
+           pendingDoubleTap.keyCode == keyCode,
+           timestamp - pendingDoubleTap.timestamp <= Self.doubleTapInterval {
+            self.pendingDoubleTap = nil
+            return .doubleTap(keyCode: keyCode)
+        }
+        pendingDoubleTap = (keyCode, timestamp)
+        return nil
+    }
+
+    private static func modifierFlag(for keyCode: UInt16) -> NSEvent.ModifierFlags? {
+        switch keyCode {
+        case 0x36, 0x37: return .command
+        case 0x38, 0x3C: return .shift
+        case 0x3A, 0x3D: return .option
+        case 0x3B, 0x3E: return .control
+        default: return nil
         }
     }
 }
@@ -2239,6 +2354,10 @@ final class AppController: NSObject, NSApplicationDelegate {
         requestAccessibilityPermissionIfNeeded()
     }
 
+    func applicationDidBecomeActive(_ notification: Notification) {
+        refreshAccessibilityTrust()
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         eventTapHealthTimer?.invalidate()
         invalidateEventTap()
@@ -2253,6 +2372,7 @@ final class AppController: NSObject, NSApplicationDelegate {
     }
 
     func showPanel(positioning: PanelPresentationPositioning = .insertionPoint) {
+        refreshAccessibilityTrust()
         let panel = ensurePanel()
         rememberPasteTarget(NSWorkspace.shared.frontmostApplication)
         model.showOverlay()
@@ -2272,6 +2392,7 @@ final class AppController: NSObject, NSApplicationDelegate {
     }
 
     func showPanelCentered() {
+        refreshAccessibilityTrust()
         let panel = ensurePanel()
         rememberPasteTarget(NSWorkspace.shared.frontmostApplication)
         model.showOverlay()
@@ -2370,7 +2491,7 @@ final class AppController: NSObject, NSApplicationDelegate {
             settingsWindow.center()
             settingsWindowHasBeenShown = true
         }
-        model.accessibilityTrusted = AXIsProcessTrusted()
+        refreshAccessibilityTrust()
         settingsWindow.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
@@ -2384,6 +2505,9 @@ final class AppController: NSObject, NSApplicationDelegate {
 
     func requestAccessibilityPermission() {
         updateHotkeySnapshot()
+        if refreshAccessibilityTrust() {
+            return
+        }
         let options: NSDictionary = [
             kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString: true
         ]
@@ -2397,9 +2521,30 @@ final class AppController: NSObject, NSApplicationDelegate {
     }
 
     func openAccessibilityAuthorization() {
-        requestAccessibilityPermission()
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
+        updateHotkeySnapshot()
+        if !refreshAccessibilityTrust() {
+            let options: NSDictionary = [
+                kAXTrustedCheckOptionPrompt.takeUnretainedValue() as NSString: true
+            ]
+            model.accessibilityTrusted = AXIsProcessTrustedWithOptions(options)
+            startPermissionRetryTimer()
+        }
+
+        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") else {
+            model.toast(L10n.accessibilitySettingsOpenFailed)
+            return
+        }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        NSWorkspace.shared.open(url, configuration: configuration) { [weak self] application, error in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                if let application {
+                    _ = application.activate(options: [.activateAllWindows])
+                } else if error != nil, !NSWorkspace.shared.open(url) {
+                    self.model.toast(L10n.accessibilitySettingsOpenFailed)
+                }
+            }
         }
     }
 
@@ -2888,6 +3033,23 @@ final class AppController: NSObject, NSApplicationDelegate {
         return range.location
     }
 
+    @discardableResult
+    func refreshAccessibilityTrust(installEventTapIfNeeded: Bool = true) -> Bool {
+        let trusted = AXIsProcessTrusted()
+        model.accessibilityTrusted = trusted
+        if trusted {
+            if installEventTapIfNeeded, eventTap == nil {
+                installEventTap()
+            }
+            if eventTap != nil {
+                stopPermissionRetryTimer()
+            }
+        } else if eventTap != nil {
+            invalidateEventTap()
+        }
+        return trusted
+    }
+
     private func installEventTap() {
         updateHotkeySnapshot()
         guard AXIsProcessTrusted() else {
@@ -2910,7 +3072,8 @@ final class AppController: NSObject, NSApplicationDelegate {
             userInfo: Unmanaged.passUnretained(self).toOpaque()
         ) else {
             NSLog("StowPaste: unable to install event tap. Accessibility permission is required.")
-            model.accessibilityTrusted = false
+            model.accessibilityTrusted = AXIsProcessTrusted()
+            startPermissionRetryTimer()
             return
         }
         eventTap = tap
@@ -2950,10 +3113,8 @@ final class AppController: NSObject, NSApplicationDelegate {
 
     private func ensureEventTapHealthy() {
         updateHotkeySnapshot()
-        let trusted = AXIsProcessTrusted()
-        model.accessibilityTrusted = trusted
+        let trusted = refreshAccessibilityTrust(installEventTapIfNeeded: false)
         guard trusted else {
-            invalidateEventTap()
             startPermissionRetryTimer()
             return
         }
@@ -2974,30 +3135,36 @@ final class AppController: NSObject, NSApplicationDelegate {
     }
 
     private func requestAccessibilityPermissionIfNeeded() {
-        if AXIsProcessTrusted() {
-            model.accessibilityTrusted = true
-            installEventTap()
+        if refreshAccessibilityTrust() {
             return
         }
         requestAccessibilityPermission()
     }
 
     private func startPermissionRetryTimer() {
-        permissionRetryTimer?.invalidate()
+        guard permissionRetryTimer == nil else { return }
         permissionRetryTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
                 let trusted = AXIsProcessTrusted()
                 self.model.accessibilityTrusted = trusted
                 if trusted {
-                    self.permissionRetryTimer?.invalidate()
-                    self.permissionRetryTimer = nil
                     if self.eventTap == nil {
                         self.installEventTap()
                     }
+                    if self.eventTap != nil {
+                        self.stopPermissionRetryTimer()
+                    }
+                } else if self.eventTap != nil {
+                    self.invalidateEventTap()
                 }
             }
         }
+    }
+
+    private func stopPermissionRetryTimer() {
+        permissionRetryTimer?.invalidate()
+        permissionRetryTimer = nil
     }
 
     private func installOutsideClickMonitor() {
@@ -5289,17 +5456,25 @@ struct SettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     settingsSection(L10n.permissions) {
-                        HStack {
-                        Label(
-                            model.accessibilityTrusted ? L10n.accessibilityGranted : L10n.accessibilityRequired,
-                            systemImage: model.accessibilityTrusted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill"
-                        )
-                        .foregroundStyle(model.accessibilityTrusted ? .green : .orange)
-                        Spacer()
-                        Button(L10n.openAuthorization) {
-                            controller.openAccessibilityAuthorization()
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Label(
+                                    model.accessibilityTrusted ? L10n.accessibilityGranted : L10n.accessibilityRequired,
+                                    systemImage: model.accessibilityTrusted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill"
+                                )
+                                .foregroundStyle(model.accessibilityTrusted ? .green : .orange)
+                                Spacer()
+                                Button(L10n.openAuthorization) {
+                                    controller.openAccessibilityAuthorization()
+                                }
+                            }
+                            if !model.accessibilityTrusted {
+                                Text(L10n.accessibilityRepairHint)
+                                    .font(.caption)
+                                    .foregroundStyle(settingsThemeColors.itemSecondary ?? Color.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
-                    }
                     }
 
                     settingsSection(L10n.basics) {
@@ -5355,7 +5530,7 @@ struct SettingsView: View {
             DispatchQueue.main.async { self.controller.updateHotkeySnapshot() }
         }
         .onAppear {
-            model.accessibilityTrusted = AXIsProcessTrusted()
+            controller.refreshAccessibilityTrust()
             launchAtLogin = SMAppService.mainApp.status == .enabled
         }
         .sheet(isPresented: $showingThemeProposalSheet) {
@@ -5876,7 +6051,7 @@ struct HotkeyRecorderView: View {
     @State private var timeoutTask: Task<Void, Never>?
     @State private var previousHotkey = HotkeySettings()
     @State private var recordedHotkey = false
-    @State private var pendingDoubleTapKeyCode: UInt16?
+    @State private var recordingState = HotkeyRecordingState()
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -5908,7 +6083,7 @@ struct HotkeyRecorderView: View {
         stopRecording()
         previousHotkey = hotkey
         recordedHotkey = false
-        pendingDoubleTapKeyCode = nil
+        recordingState.reset()
         recording = true
         focused = true
         timeoutTask = Task { @MainActor in
@@ -5919,31 +6094,21 @@ struct HotkeyRecorderView: View {
             }
             stopRecording(restoreIfEmpty: true)
         }
-        monitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .flagsChanged]) { event in
-            if event.keyCode == 0x35 {
+        monitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp, .flagsChanged]) { event in
+            if event.type == .keyDown, event.keyCode == 0x35 {
                 stopRecording(restoreIfEmpty: true)
                 return nil
             }
-            if event.type == .keyDown, let next = HotkeySettings.from(event: event) {
+            if let next = recordingState.consume(
+                eventType: event.type,
+                keyCode: event.keyCode,
+                modifierFlags: event.modifierFlags,
+                isRepeat: event.isARepeat,
+                timestamp: event.timestamp
+            ) {
                 hotkey = next
                 recordedHotkey = true
                 stopRecording()
-                return nil
-            }
-            guard isDoubleTapCandidate(event) else { return nil }
-            if pendingDoubleTapKeyCode == event.keyCode {
-                hotkey = HotkeySettings(
-                    keyCode: Int64(event.keyCode),
-                    command: false,
-                    option: false,
-                    control: false,
-                    shift: false,
-                    doubleTap: true
-                )
-                recordedHotkey = true
-                stopRecording()
-            } else {
-                pendingDoubleTapKeyCode = event.keyCode
             }
             return nil
         }
@@ -5959,27 +6124,8 @@ struct HotkeyRecorderView: View {
         if recording, restoreIfEmpty, !recordedHotkey {
             hotkey = previousHotkey
         }
-        pendingDoubleTapKeyCode = nil
+        recordingState.reset()
         recording = false
-    }
-
-    private func isDoubleTapCandidate(_ event: NSEvent) -> Bool {
-        if event.type == .keyDown {
-            return HotkeySettings.from(event: event) == nil
-        }
-        guard event.type == .flagsChanged,
-              let modifier = modifierFlag(for: event.keyCode) else { return false }
-        return event.modifierFlags.contains(modifier)
-    }
-
-    private func modifierFlag(for keyCode: UInt16) -> NSEvent.ModifierFlags? {
-        switch keyCode {
-        case 0x36, 0x37: return .command
-        case 0x38, 0x3C: return .shift
-        case 0x3A, 0x3D: return .option
-        case 0x3B, 0x3E: return .control
-        default: return nil
-        }
     }
 }
 

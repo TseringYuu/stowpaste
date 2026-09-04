@@ -62,11 +62,11 @@ if grep -RiqE "$RETIRED_COPY_PATTERN" "$WEBSITE_PACKAGE_DIR" --exclude-dir=node_
   exit 1
 fi
 
-require_file "public/downloads/StowPaste-v0.1.0.dmg" "current DMG download artifact"
-require_file "public/downloads/StowPaste-v0.1.0.dmg.sha256" "current DMG checksum"
-require_file "public/downloads/StowPaste-v0.1.0-zh-CN.dmg" "current Chinese DMG download artifact"
-require_file "public/downloads/StowPaste-v0.1.0-zh-CN.dmg.sha256" "current Chinese DMG checksum"
-if [[ -e "$WEBSITE_PACKAGE_DIR/public/downloads/StowPaste-v0.1.0.pkg" ]]; then
+require_file "public/downloads/StowPaste-v0.1.1.dmg" "current DMG download artifact"
+require_file "public/downloads/StowPaste-v0.1.1.dmg.sha256" "current DMG checksum"
+require_file "public/downloads/StowPaste-v0.1.1-zh-CN.dmg" "current Chinese DMG download artifact"
+require_file "public/downloads/StowPaste-v0.1.1-zh-CN.dmg.sha256" "current Chinese DMG checksum"
+if [[ -e "$WEBSITE_PACKAGE_DIR/public/downloads/StowPaste-v0.1.1.pkg" ]]; then
   echo "Unexpected: retired PKG remains in the website download directory" >&2
   exit 1
 fi

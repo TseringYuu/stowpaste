@@ -13,6 +13,10 @@ const steps = [
   {
     title: "Choose Open Anyway",
     text: "In System Settings → Privacy & Security, choose Open Anyway for StowPaste and authenticate if prompted."
+  },
+  {
+    title: "Grant Accessibility",
+    text: "Enable StowPaste in Privacy & Security → Accessibility. If an old enabled entry is stale after updating, remove it, add /Applications/StowPaste.app again, and reopen the app."
   }
 ];
 

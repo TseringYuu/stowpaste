@@ -42,6 +42,6 @@ if [[ ! -f "$DMG_GUIDE_SCREENSHOT" ]]; then
   echo "Missing: real macOS Open Anyway guide screenshot" >&2
   exit 1
 fi
-require_file_source "$BUILD_INSTALLER" 'APP_VERSION="0\.1\.0"' 'installer artifact name identifies the universal 0.1.0 build'
+require_file_source "$BUILD_INSTALLER" 'APP_VERSION="0\.1\.1"' 'installer artifact name identifies the universal 0.1.1 build'
 
 echo "packaging architecture regression checks passed"

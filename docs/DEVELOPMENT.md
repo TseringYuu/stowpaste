@@ -48,16 +48,16 @@ The app bundle is written to `dist/StowPaste.app`.
 
 ## Direct-distribution packaging
 
-The current release channel is the versioned PKG published on `stowpaste.aiware.store`.
+The current release channel is the versioned DMG published on `stowpaste.aiware.store`.
 
 ```bash
-./Scripts/build_dmg.sh
-./Scripts/build_installer.sh
+./Scripts/build_dmg.sh en
+./Scripts/build_dmg.sh zh-CN
 ```
 
 Generated artifacts are written to `dist/` and must not be committed from that directory. The website's public download must be copied from the final verified artifact and accompanied by its SHA-256 file.
 
-The published `v0.1.0` package is an early build: its outer installer is not Developer ID Installer signed and it is not notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
+The published `v0.1.1` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
 
 ## Verification
 
@@ -73,9 +73,9 @@ The suite covers Swift build and tests, global shortcuts, focus restoration, pan
 Before a release, also inspect the package directly:
 
 ```bash
-pkgutil --check-signature packages/website/public/downloads/StowPaste-v0.1.0.pkg
-pkgutil --payload-files packages/website/public/downloads/StowPaste-v0.1.0.pkg
-shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.0.pkg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.1.dmg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.1-zh-CN.dmg
+shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.1*.dmg
 ```
 
 ## Product and network rules

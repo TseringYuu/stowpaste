@@ -58,8 +58,8 @@ if grep -Eq 'PKG_ROOT/Applications' "$BUILD_INSTALLER"; then
   echo "Unexpected: installer package root should not include an Applications directory when install-location is /Applications" >&2
   exit 1
 fi
-require_file_source "$BUILD_INSTALLER" 'APP_VERSION="0\.1\.0"' 'installer artifact has a predictable 0.1.0 pkg name'
-require_file_source "$BUILD_INSTALLER" 'PKG_VERSION="0\.1\.0"' 'installer package version matches the 0.1.0 release'
+require_file_source "$BUILD_INSTALLER" 'APP_VERSION="0\.1\.1"' 'installer artifact has a predictable 0.1.1 pkg name'
+require_file_source "$BUILD_INSTALLER" 'PKG_VERSION="0\.1\.1"' 'installer package version matches the 0.1.1 release'
 require_file_source "$BUILD_INSTALLER" '--scripts "\$SCRIPTS_DIR"' 'installer runs installation helper scripts'
 require_file_source "$BUILD_INSTALLER" 'COPYFILE_DISABLE=1' 'installer avoids AppleDouble metadata files'
 require_file_source "$BUILD_INSTALLER" 'ditto --noextattr --noacl' 'installer copies app bundle without extended metadata'

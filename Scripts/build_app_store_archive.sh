@@ -14,8 +14,8 @@ CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 ENTITLEMENTS="$APP_PACKAGE_DIR/Resources/StowPaste.entitlements"
-UNSIGNED_PKG="$DIST_DIR/${DISPLAY_NAME}_0.1.0_app_store_unsigned.pkg"
-SIGNED_PKG="$DIST_DIR/${DISPLAY_NAME}_0.1.0_app_store.pkg"
+UNSIGNED_PKG="$DIST_DIR/${DISPLAY_NAME}_0.1.1_app_store_unsigned.pkg"
+SIGNED_PKG="$DIST_DIR/${DISPLAY_NAME}_0.1.1_app_store.pkg"
 
 require_supported_xcode() {
   local version
@@ -99,7 +99,7 @@ cat > "$CONTENTS_DIR/Info.plist" <<PLIST
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
-  <string>0.1.0</string>
+  <string>0.1.1</string>
   <key>CFBundleVersion</key>
   <string>1</string>
   <key>LSMinimumSystemVersion</key>

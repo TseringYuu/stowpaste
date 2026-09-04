@@ -10,7 +10,7 @@
 
   <rect width="800" height="640" fill="#f4f1e8"/>
   <path d="M0 0h800v58H0z" fill="#655dff"/>
-  <text x="32" y="37" fill="#fff" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="16" font-weight="800" letter-spacing="1.8">STOWPASTE / INSTALL v0.1.0</text>
+  <text x="32" y="37" fill="#fff" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="16" font-weight="800" letter-spacing="1.8">STOWPASTE / INSTALL v0.1.1</text>
   <text x="768" y="37" text-anchor="end" fill="#fff" font-family="Menlo, PingFang SC, monospace" font-size="11" font-weight="700">macOS 14+ · UNIVERSAL</text>
 
   <text x="400" y="104" text-anchor="middle" fill="#17181c" font-family="Helvetica Neue, PingFang SC, sans-serif" font-size="26" font-weight="900">拖动安装</text>
