@@ -16,9 +16,9 @@ export const site = {
   privacyUrl: "/privacy",
   docsUrl: "/docs",
   githubUrl: "https://github.com/TseringYuu/stowpaste",
-  githubApiUrl: "https://api.github.com/repos/TseringYuu/stowpaste",
+  githubStarsUrl: "https://img.shields.io/github/stars/TseringYuu/stowpaste.json",
   appleOpenAnywayUrl: "https://support.apple.com/102445",
-  githubStarsFallback: 0,
+  githubStarsFallback: 7,
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "support@aiware.store"
 };
 

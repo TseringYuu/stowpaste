@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 
-const cacheKey = "stowpaste-github-stars";
+const cacheKey = "stowpaste-github-stars-v2";
 const cacheLifetime = 10 * 60 * 1000;
 
 function formatStars(value: number) {
@@ -11,6 +11,17 @@ function formatStars(value: number) {
     notation: value >= 1000 ? "compact" : "standard",
     maximumFractionDigits: 1
   }).format(value);
+}
+
+function parseStars(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.round(value));
+  if (typeof value !== "string") return undefined;
+  const match = value.trim().replaceAll(",", "").match(/^([0-9]+(?:\.[0-9]+)?)([kmb])?$/i);
+  if (!match) return undefined;
+  const multipliers = { k: 1_000, m: 1_000_000, b: 1_000_000_000 } as const;
+  const suffix = match[2]?.toLowerCase() as keyof typeof multipliers | undefined;
+  const parsed = Number(match[1]) * (suffix ? multipliers[suffix] : 1);
+  return Number.isFinite(parsed) ? Math.max(0, Math.round(parsed)) : undefined;
 }
 
 export function GitHubLink() {
@@ -36,21 +47,22 @@ export function GitHubLink() {
 
     const controller = new AbortController();
 
-    fetch(site.githubApiUrl, {
-      headers: { Accept: "application/vnd.github+json" },
+    fetch(site.githubStarsUrl, {
+      headers: { Accept: "application/json" },
       signal: controller.signal
     })
       .then((response) => {
-        if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
-        return response.json() as Promise<{ stargazers_count?: unknown }>;
+        if (!response.ok) throw new Error(`Star count service returned ${response.status}`);
+        return response.json() as Promise<{ value?: unknown; message?: unknown }>;
       })
-      .then((repository) => {
-        if (typeof repository.stargazers_count !== "number") return;
-        setStars(repository.stargazers_count);
+      .then((badge) => {
+        const nextStars = parseStars(badge.value ?? badge.message);
+        if (nextStars === undefined) return;
+        setStars(nextStars);
         try {
           window.sessionStorage.setItem(
             cacheKey,
-            JSON.stringify({ stars: repository.stargazers_count, savedAt: Date.now() })
+            JSON.stringify({ stars: nextStars, savedAt: Date.now() })
           );
         } catch {
           // The fetched count remains visible even when storage is unavailable.

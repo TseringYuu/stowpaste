@@ -4,6 +4,10 @@ All notable changes to StowPaste are documented here. This project follows seman
 
 ## [Unreleased]
 
+### Fixed
+
+- Made the website GitHub button start with a verified nonzero star count and refresh through a cached public badge endpoint instead of the frequently rate-limited unauthenticated GitHub API.
+
 ## [0.1.1] - 2026-09-04
 
 ### Changed

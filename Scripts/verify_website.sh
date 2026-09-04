@@ -45,7 +45,9 @@ require_text "lib/site.ts" 'checksumSha256ZhCN' "website publishes the Chinese D
 require_text "app/page.tsx" 'Download DMG' "homepage explicit download label"
 require_text "app/page.tsx" 'data-paper-field' "homepage WebGL paper field"
 require_text "components/site-header.tsx" 'GitHubLink' "header includes the GitHub repository entry"
-require_text "components/github-link.tsx" 'stargazers_count' "GitHub entry displays the current star count"
+require_text "components/github-link.tsx" 'githubStarsUrl' "GitHub entry loads the current star count"
+require_text "components/github-link.tsx" 'parseStars' "GitHub entry validates the returned star count"
+require_text "lib/site.ts" 'githubStarsFallback: [1-9][0-9]*' "GitHub entry has a nonzero build-time star fallback"
 require_text "lib/site.ts" 'githubUrl' "website has the public repository URL"
 if grep -Eq 'hero-utility-links' "$WEBSITE_PACKAGE_DIR/app/page.tsx"; then
   echo "Unexpected: homepage still includes the retired lower-right utility buttons" >&2
