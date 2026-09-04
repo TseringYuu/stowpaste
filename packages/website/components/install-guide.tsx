@@ -2,16 +2,16 @@ import { site } from "@/lib/site";
 
 const steps = [
   {
-    title: "Try the installer once",
-    text: "Download the PKG and open it. macOS may say it cannot verify that the package is free of malware."
+    title: "Drag into Applications",
+    text: "Open the DMG, then drag StowPaste onto the Applications shortcut."
   },
   {
-    title: "Open Privacy & Security",
-    text: "In System Settings, choose Privacy & Security, then scroll down to the Security section."
+    title: "Try opening StowPaste",
+    text: "Launch it from Applications once. macOS may say it cannot verify the developer."
   },
   {
     title: "Choose Open Anyway",
-    text: "Confirm Open Anyway, authenticate with your Mac password, and return to the installer."
+    text: "In System Settings → Privacy & Security, choose Open Anyway for StowPaste and authenticate if prompted."
   }
 ];
 
@@ -20,17 +20,17 @@ export function InstallGuide() {
     <section className="install-guide" id="install" aria-labelledby="install-title">
       <div className="install-sheet">
         <div className="install-sheet-meta">
-          <span>INSTALL RECEIPT / {site.versionTag}</span>
+          <span>INSTALL CARD / {site.versionTag}</span>
           <span>OPEN SOURCE / NOT NOTARIZED</span>
         </div>
 
         <div className="install-guide-layout">
           <div className="install-guide-intro">
             <span className="install-kicker">BEFORE YOU OPEN</span>
-            <h2 id="install-title">macOS may stop the installer once.</h2>
+            <h2 id="install-title">macOS may stop the app once.</h2>
             <p>
               StowPaste is independent open-source software and does not use a paid Apple Developer
-              account. The app is ad-hoc signed; the PKG is not Developer ID signed or notarized by Apple.
+              account. The app is ad-hoc signed; the app and DMG are not Developer ID signed or notarized by Apple.
             </p>
             <p className="install-trust-copy">
               Review the source and checksum before creating a one-app exception for StowPaste.
@@ -54,7 +54,7 @@ export function InstallGuide() {
             <code>{site.checksumSha256}</code>
           </div>
           <div className="install-guide-actions">
-            <a className="install-download" href={site.downloadUrl}>Download PKG <span aria-hidden="true">↓</span></a>
+            <a className="install-download" href={site.downloadUrl}>Download DMG <span aria-hidden="true">↓</span></a>
             <a href={site.checksumUrl}>Checksum file</a>
             <a href={site.githubUrl} target="_blank" rel="noreferrer">Review source</a>
             <a href={site.appleOpenAnywayUrl} target="_blank" rel="noreferrer">Apple&apos;s guide</a>

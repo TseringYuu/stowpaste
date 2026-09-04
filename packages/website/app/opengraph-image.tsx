@@ -26,7 +26,7 @@ export default function Image() {
           <span>Copied.</span><span>Copied over.</span><span style={{ color: "#655DFF" }}>Not gone.</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 34, border: "3px solid #17181C", background: "#17181C", padding: "16px 18px", color: "#FFFFFF", boxShadow: "7px 7px 0 #FF6846", fontSize: 24, fontWeight: 800 }}>
-          <span>Download PKG</span><span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 50, height: 50, background: "#9FF5E0", color: "#17181C", fontSize: 32 }}>↓</span>
+          <span>Download DMG</span><span style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 50, height: 50, background: "#9FF5E0", color: "#17181C", fontSize: 32 }}>↓</span>
         </div>
       </div>
     </div>,

@@ -3,28 +3,39 @@ set -euo pipefail
 
 source "$(cd "$(dirname "$0")" && pwd)/lib/paths.sh"
 
-PKG="$WEBSITE_PACKAGE_DIR/public/downloads/StowPaste-v0.1.0.pkg"
-CHECKSUM_FILE="$PKG.sha256"
+DMG="$WEBSITE_PACKAGE_DIR/public/downloads/StowPaste-v0.1.0.dmg"
+CHECKSUM_FILE="$DMG.sha256"
 
-if [[ ! -f "$PKG" || ! -f "$CHECKSUM_FILE" ]]; then
-  echo "Missing: public PKG or checksum" >&2
+if [[ ! -f "$DMG" || ! -f "$CHECKSUM_FILE" ]]; then
+  echo "Missing: public DMG or checksum" >&2
   exit 1
 fi
 
 EXPECTED_SHA="$(awk 'NR == 1 { print $1 }' "$CHECKSUM_FILE")"
-ACTUAL_SHA="$(shasum -a 256 "$PKG" | awk '{ print $1 }')"
+ACTUAL_SHA="$(shasum -a 256 "$DMG" | awk '{ print $1 }')"
 if [[ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]]; then
-  echo "Unexpected: public PKG checksum does not match its checksum file" >&2
+  echo "Unexpected: public DMG checksum does not match its checksum file" >&2
   exit 1
 fi
 
 AUDIT_DIR="$(mktemp -d)"
-trap 'rm -rf "$AUDIT_DIR"' EXIT
-pkgutil --expand-full "$PKG" "$AUDIT_DIR/unpacked" >/dev/null
-APP_PATH="$(find "$AUDIT_DIR/unpacked" -type d -name 'StowPaste.app' -print -quit)"
+MOUNT_POINT="$AUDIT_DIR/mount"
+mkdir -p "$MOUNT_POINT"
+cleanup() {
+  hdiutil detach "$MOUNT_POINT" >/dev/null 2>&1 || true
+  rm -rf "$AUDIT_DIR"
+}
+trap cleanup EXIT
+hdiutil verify "$DMG" >/dev/null
+hdiutil attach -readonly -nobrowse -mountpoint "$MOUNT_POINT" "$DMG" >/dev/null
+APP_PATH="$MOUNT_POINT/StowPaste.app"
 
-if [[ -z "$APP_PATH" ]]; then
-  echo "Missing: StowPaste.app in the public installer" >&2
+if [[ ! -d "$APP_PATH" ]]; then
+  echo "Missing: StowPaste.app in the public DMG" >&2
+  exit 1
+fi
+if [[ ! -L "$MOUNT_POINT/Applications" || "$(readlink "$MOUNT_POINT/Applications")" != "/Applications" ]]; then
+  echo "Missing: Applications shortcut in the public DMG" >&2
   exit 1
 fi
 

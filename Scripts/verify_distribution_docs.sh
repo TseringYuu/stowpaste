@@ -34,8 +34,8 @@ require_website_text() {
 }
 
 require_repo_text "README.zh-CN.md" 'docs/assets/readme-hero\.png' 'Chinese README includes the current product preview'
-require_repo_text "README.zh-CN.md" 'StowPaste v0\.1\.0（PKG）' 'Chinese README has a prominent versioned download action'
-require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0\.pkg' 'Chinese README links the published release PKG'
+require_repo_text "README.zh-CN.md" 'StowPaste v0\.1\.0（DMG）' 'Chinese README has a prominent versioned download action'
+require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0\.dmg' 'Chinese README links the published release DMG'
 require_repo_text "README.zh-CN.md" 'macOS 14' 'Chinese README documents the minimum macOS version'
 require_repo_text "README.zh-CN.md" 'Apple silicon.*Intel' 'Chinese README documents the universal architecture'
 require_repo_text "README.zh-CN.md" '不需要账户' 'Chinese README states that no account is required'
@@ -49,8 +49,8 @@ require_repo_text "README.zh-CN.md" 'https://github\.com/TseringYuu/stowpaste|CO
 reject_repo_text "README.zh-CN.md" 'Mac App Store|apps\.apple\.com|Lite|智能推荐|翻译|OpenAI|chat/completions|API Key|Endpoint' 'Chinese README must not expose unavailable distribution channels or absent features'
 
 require_repo_text "README.md" 'docs/assets/readme-hero\.png' 'English README includes the current product preview'
-require_repo_text "README.md" 'Download StowPaste v0\.1\.0 \(PKG\)' 'English README has a prominent versioned download action'
-require_repo_text "README.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0\.pkg' 'English README links the published release PKG'
+require_repo_text "README.md" 'Download StowPaste v0\.1\.0 \(DMG\)' 'English README has a prominent versioned download action'
+require_repo_text "README.md" 'https://github\.com/TseringYuu/stowpaste/releases/download/v0\.1\.0/StowPaste-v0\.1\.0\.dmg' 'English README links the published release DMG'
 require_repo_text "README.md" 'macOS 14' 'English README documents the minimum macOS version'
 require_repo_text "README.md" 'Apple silicon.*Intel' 'English README documents the universal architecture'
 require_repo_text "README.md" 'requires no account' 'English README states that no account is required'
@@ -67,10 +67,10 @@ require_website_text "lib/site.ts" 'privacyUrl' 'website has a privacy policy UR
 require_website_text "components/site-header.tsx" 'privacyUrl' 'site header links privacy details'
 require_website_text "components/install-guide.tsx" 'OPEN SOURCE / NOT NOTARIZED' 'website discloses missing Apple notarization before installation'
 require_website_text "components/install-guide.tsx" 'Open Anyway' 'website explains the per-app Gatekeeper exception'
-require_website_text "components/install-guide.tsx" 'checksumSha256' 'website publishes the installer checksum'
+require_website_text "components/install-guide.tsx" 'checksumSha256' 'website publishes the disk image checksum'
 require_website_text "app/privacy/page.tsx" 'StowPaste privacy' 'website includes privacy page'
 require_website_text "app/api/downloads/route.ts" 'versionTag' 'downloads API exposes a version tag'
-require_website_text "app/api/downloads/route.ts" 'type: "pkg"' 'downloads API exposes the PKG artifact'
+require_website_text "app/api/downloads/route.ts" 'type: "dmg"' 'downloads API exposes the DMG artifact'
 if grep -Eq 'appStoreUrl|artifacts: \["app-store"\]' "$WEBSITE_PACKAGE_DIR/app/api/downloads/route.ts"; then
   echo "Unexpected: downloads API still references the unavailable App Store" >&2
   exit 1

@@ -21,7 +21,9 @@ require_file_source "$BUILD_APP" 'BUILD_ARCHS=\$\{STOWPASTE_BUILD_ARCHS:-"arm64 
 require_file_source "$BUILD_APP" 'for arch in \$BUILD_ARCHS' 'normal app builds pass each requested architecture to SwiftPM'
 require_file_source "$BUILD_APP" 'SWIFT_ARCH_FLAGS\+=\(--arch "\$arch"\)' 'normal app build uses SwiftPM architecture flags'
 require_file_source "$BUILD_APP" 'BUILD_DIR="\$BUILD_PATH/apple/Products/Release"' 'normal app build copies the universal binary emitted by SwiftPM'
-require_file_source "$BUILD_DMG" '\$\{DISPLAY_NAME\}_0\.1\.0_universal\.dmg' 'DMG artifact name identifies the universal 0.1.0 build'
+require_file_source "$BUILD_DMG" '\$\{DISPLAY_NAME\}-v\$\{APP_VERSION\}\.dmg' 'DMG artifact name identifies the versioned public build'
+require_file_source "$BUILD_DMG" 'ditto --noextattr --noacl' 'DMG preserves the app bundle without extended metadata'
+require_file_source "$BUILD_DMG" 'shasum -a 256' 'DMG build emits a SHA-256 checksum'
 require_file_source "$BUILD_INSTALLER" 'APP_VERSION="0\.1\.0"' 'installer artifact name identifies the universal 0.1.0 build'
 
 echo "packaging architecture regression checks passed"

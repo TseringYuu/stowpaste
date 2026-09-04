@@ -22,7 +22,7 @@
 </div>
 
 > [!IMPORTANT]
-> ### [↓ 下载 StowPaste v0.1.0（PKG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.pkg)
+> ### [↓ 下载 StowPaste v0.1.0（DMG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg)
 > 适用于 macOS 14 或更高版本，兼容 Apple silicon 与 Intel Mac。无需账户。
 
 <p align="center">
@@ -32,7 +32,7 @@
   &nbsp;·&nbsp;
   <a href="https://stowpaste.aiware.store/privacy">隐私说明</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.pkg.sha256">SHA-256</a>
+  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg.sha256">SHA-256</a>
 </p>
 
 ![StowPaste 官网与下载界面](docs/assets/readme-hero.png)
@@ -56,30 +56,30 @@
 
 ## 安装
 
-1. 下载 [StowPaste v0.1.0 PKG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.pkg)。
-2. 先打开一次安装包；macOS 可能提示无法验证该安装包是否包含恶意软件。
-3. 打开「系统设置 → 隐私与安全性」，向下滚动到「安全性」，为 StowPaste 选择「仍要打开」。
-4. 使用 Mac 登录密码确认，完成安装，然后从「应用程序」启动 StowPaste。
+1. 下载并打开 [StowPaste v0.1.0 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg)。
+2. 将 `StowPaste.app` 拖到磁盘映像中的「应用程序」快捷方式上。
+3. 从「应用程序」启动 StowPaste；macOS 可能提示无法验证开发者。
+4. 打开「系统设置 → 隐私与安全性」，向下滚动到「安全性」，为 StowPaste 选择「仍要打开」，并按提示确认身份。
 5. 按提示授予「辅助功能」权限；如果授权页没有自动打开，请前往「系统设置 → 隐私与安全性 → 辅助功能」并启用 StowPaste。
 
 辅助功能权限用于监听全局快捷键、恢复原来的输入焦点，以及把选中的内容粘贴回当前应用。
 
 > [!NOTE]
-> `v0.1.0` 是不使用付费 Apple Developer 账户的独立开源构建。应用本体使用不包含个人身份的 ad-hoc 签名，安装包未经 Developer ID 签名或 Apple 公证。请先检查源码与 SHA-256，再为 StowPaste 创建上述单应用例外；不要全局关闭 Gatekeeper。更换签名身份的版本也可能需要重新授予辅助功能权限。
+> `v0.1.0` 是不使用付费 Apple Developer 账户的独立开源构建。应用本体使用不包含个人身份的 ad-hoc 签名，应用与磁盘映像未经 Developer ID 签名或 Apple 公证。请先检查源码与 SHA-256，再为 StowPaste 创建上述单应用例外；不要全局关闭 Gatekeeper。更换签名身份的版本也可能需要重新授予辅助功能权限。
 
 <details>
-<summary><strong>校验安装包</strong></summary>
+<summary><strong>校验磁盘映像</strong></summary>
 
 下载官方校验文件，或在终端执行：
 
 ```bash
-shasum -a 256 StowPaste-v0.1.0.pkg
+shasum -a 256 StowPaste-v0.1.0.dmg
 ```
 
 预期 SHA-256：
 
 ```text
-e2e68684bf979ad50ad2f36a3124b1e4d5052009bc1df7319d315a838b6728c7
+977b1906fae33f9af1ce56e84a1dc6cd2bf5269d630a6ebe1612f59124eeace4
 ```
 
 </details>

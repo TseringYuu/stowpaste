@@ -20,10 +20,10 @@ const sections = [
   {
     title: "Install and authorize",
     body:
-      "StowPaste v0.1.0 is an open-source build that is not Developer ID signed or notarized by Apple. After you try to open the PKG, macOS may block it once. Create a one-app exception only after reviewing the source and SHA-256 checksum.",
+      "StowPaste v0.1.0 is an open-source build that is not Developer ID signed or notarized by Apple. Open the DMG, drag StowPaste into Applications, then try to launch it. macOS may block the app once. Create a one-app exception only after reviewing the source and SHA-256 checksum.",
     bullets: [
       "Open System Settings → Privacy & Security, scroll to Security, then choose Open Anyway for StowPaste.",
-      "Authenticate, finish the installer, and launch StowPaste from Applications. Never disable Gatekeeper globally.",
+      "Choose Open Anyway, authenticate if prompted, and launch StowPaste from Applications. Never disable Gatekeeper globally.",
       "When prompted, open Privacy & Security → Accessibility and turn on StowPaste.",
       "Keep the same installed app when updating to avoid a new authorization prompt."
     ]

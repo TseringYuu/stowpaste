@@ -7,9 +7,9 @@ export const site = {
   versionTag: "v0.1.0",
   minimumSystemVersion: "macOS 14 or later",
   architecture: "Apple silicon + Intel",
-  downloadUrl: "/downloads/StowPaste-v0.1.0.pkg?build=e2e68684",
-  checksumUrl: "/downloads/StowPaste-v0.1.0.pkg.sha256",
-  checksumSha256: "e2e68684bf979ad50ad2f36a3124b1e4d5052009bc1df7319d315a838b6728c7",
+  downloadUrl: "/downloads/StowPaste-v0.1.0.dmg?build=977b1906",
+  checksumUrl: "/downloads/StowPaste-v0.1.0.dmg.sha256",
+  checksumSha256: "977b1906fae33f9af1ce56e84a1dc6cd2bf5269d630a6ebe1612f59124eeace4",
   privacyUrl: "/privacy",
   docsUrl: "/docs",
   githubUrl: "https://github.com/TseringYuu/stowpaste",
@@ -62,7 +62,7 @@ export const docs = [
   {
     slug: "install-authorize",
     title: "Install and authorize",
-    summary: "Install the package, grant Accessibility permission, and keep the menu bar utility ready."
+    summary: "Install from the disk image, grant Accessibility permission, and keep the menu bar utility ready."
   },
   {
     slug: "paste-panel",

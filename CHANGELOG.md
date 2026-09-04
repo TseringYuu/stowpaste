@@ -8,7 +8,8 @@ All notable changes to StowPaste are documented here. This project follows seman
 
 - Made the website and installation guide explicitly disclose that `v0.1.0` is not Developer ID signed or Apple-notarized.
 - Added the macOS `Open Anyway` path, published checksum, source-review link, and Apple guidance alongside the download.
-- Added a cache-busting download URL so previously cached copies of the replaced early PKG are not reused.
+- Changed the primary direct-distribution format from PKG to a drag-to-Applications DMG.
+- Added a cache-busting download URL so previously cached release artifacts are not reused.
 
 ## [0.1.0] - 2026-09-01
 
@@ -24,13 +25,13 @@ Initial public release.
 - Configurable history retention and launch at login.
 - System, light, dark, and locally generated custom themes.
 - Local persistence for clipboard history, images, groups, favorites, and settings.
-- Official website, guide, privacy page, versioned PKG download, and SHA-256 checksum.
+- Official website, guide, privacy page, versioned direct download, and SHA-256 checksum.
 - Universal Apple silicon and Intel build tooling.
 - Apache License 2.0 source release, contribution guide, security policy, and third-party notices.
 
 ### Distribution note
 
-The `v0.1.0` PKG is an early direct-distribution build. The application uses an identity-free ad-hoc signature, its outer installer is not signed with a Developer ID Installer certificate, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch.
+The current `v0.1.0` direct download is a DMG. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch.
 
 [Unreleased]: https://github.com/TseringYuu/stowpaste/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/TseringYuu/stowpaste/releases/tag/v0.1.0

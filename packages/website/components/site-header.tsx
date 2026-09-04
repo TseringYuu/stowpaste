@@ -24,7 +24,7 @@ export function SiteHeader() {
         <Link href={site.privacyUrl}>Privacy</Link>
         <GitHubLink />
         <a className="header-download js-organize-trigger" href={site.downloadUrl}>
-          <span>Download PKG</span>
+          <span>Download DMG</span>
           <small>{site.versionTag}</small>
           <b aria-hidden="true">↓</b>
         </a>

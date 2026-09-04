@@ -22,7 +22,7 @@
 </div>
 
 > [!IMPORTANT]
-> ### [↓ Download StowPaste v0.1.0 (PKG)](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.pkg)
+> ### [↓ Download StowPaste v0.1.0 (DMG)](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg)
 > For macOS 14 or later on Apple silicon and Intel Macs. No account required.
 
 <p align="center">
@@ -32,7 +32,7 @@
   &nbsp;·&nbsp;
   <a href="https://stowpaste.aiware.store/privacy">Privacy</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.pkg.sha256">SHA-256</a>
+  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg.sha256">SHA-256</a>
 </p>
 
 ![StowPaste website and download screen](docs/assets/readme-hero.png)
@@ -56,30 +56,30 @@
 
 ## Install
 
-1. Download the [StowPaste v0.1.0 PKG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.pkg).
-2. Open the installer once. macOS may say it cannot verify that the package is free of malware.
-3. Open System Settings → Privacy & Security, scroll to Security, and choose **Open Anyway** for StowPaste.
-4. Authenticate with your Mac password, finish the installer, then launch StowPaste from Applications.
+1. Download and open the [StowPaste v0.1.0 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.0/StowPaste-v0.1.0.dmg).
+2. Drag `StowPaste.app` onto the Applications shortcut in the disk image.
+3. Launch StowPaste from Applications. macOS may say it cannot verify the developer.
+4. Open System Settings → Privacy & Security, scroll to Security, and choose **Open Anyway** for StowPaste. Authenticate if prompted.
 5. Grant Accessibility permission when prompted. If the settings page does not open automatically, go to System Settings → Privacy & Security → Accessibility and enable StowPaste.
 
 Accessibility permission lets StowPaste listen for the global shortcut, restore the previous input focus, and paste the selected item into the active app.
 
 > [!NOTE]
-> `v0.1.0` is an independent open-source build that does not use a paid Apple Developer account. The application uses an identity-free ad-hoc signature; the installer is not Developer ID signed or notarized by Apple. Review the source and checksum before creating the one-app exception above. Never disable Gatekeeper globally. A build signed with a different identity may also require Accessibility permission again.
+> `v0.1.0` is an independent open-source build that does not use a paid Apple Developer account. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed or notarized by Apple. Review the source and checksum before creating the one-app exception above. Never disable Gatekeeper globally. A build signed with a different identity may also require Accessibility permission again.
 
 <details>
-<summary><strong>Verify the installer</strong></summary>
+<summary><strong>Verify the disk image</strong></summary>
 
 Download the official checksum file or run:
 
 ```bash
-shasum -a 256 StowPaste-v0.1.0.pkg
+shasum -a 256 StowPaste-v0.1.0.dmg
 ```
 
 Expected SHA-256:
 
 ```text
-e2e68684bf979ad50ad2f36a3124b1e4d5052009bc1df7319d315a838b6728c7
+977b1906fae33f9af1ce56e84a1dc6cd2bf5269d630a6ebe1612f59124eeace4
 ```
 
 </details>

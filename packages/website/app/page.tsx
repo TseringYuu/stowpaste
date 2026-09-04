@@ -36,7 +36,7 @@ export default function HomePage() {
 
               <a className="download-cta js-organize-trigger" href={site.downloadUrl}>
                 <span className="download-cta-copy">
-                  <strong>Download PKG</strong>
+                  <strong>Download DMG</strong>
                   <small>{site.versionTag} · {site.minimumSystemVersion}</small>
                 </span>
                 <span className="download-cta-arrow" aria-hidden="true">↓</span>

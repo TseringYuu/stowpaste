@@ -11,7 +11,7 @@ export function GET() {
     architecture: site.architecture,
     artifacts: [
       {
-        type: "pkg",
+        type: "dmg",
         url: `${site.url}${site.downloadUrl}`,
         checksumUrl: `${site.url}${site.checksumUrl}`
       }
