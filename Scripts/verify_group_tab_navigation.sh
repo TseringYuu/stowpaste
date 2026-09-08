@@ -146,7 +146,7 @@ require_source 'static var pinToScreen: String' 'panel pin has copy distinct fro
 require_source 'model\.panelPinned \? L10n\.unpinFromScreen : L10n\.pinToScreen' 'panel pin tooltip uses screen pin copy'
 require_region_source 'struct IconHitTarget: View' 'struct HoverBackground' '\.foregroundStyle\(iconColor\)' 'toolbar tab icons use state-aware theme colors'
 require_region_source 'struct IconHitTarget: View' 'struct HoverBackground' 'return theme\.primary \?\? Color\.accentColor' 'active toolbar tab icons use the primary color'
-require_region_source 'struct IconHitTarget: View' 'struct HoverBackground' 'Color\(hex: "#333333"\)' 'inactive toolbar tab icons use dark neutral text in the default light theme'
+require_region_source 'struct IconHitTarget: View' 'struct HoverBackground' 'return Color\.primary' 'inactive toolbar tab icons use the adaptive system label color'
 require_region_source 'private func buildStatusItem\(\)' 'private func makeStatusMenu\(\) -> NSMenu' 'Bundle\.main\.url\(forResource: "AppIcon", withExtension: "icns"\)' 'menu bar toolbar icon keeps the original app icon artwork'
 require_region_source 'private func buildStatusItem\(\)' 'private func makeStatusMenu\(\) -> NSMenu' 'NSImage\(contentsOf: iconURL\)' 'menu bar toolbar icon loads the original icon resource'
 require_region_source 'private func buildStatusItem\(\)' 'private func makeStatusMenu\(\) -> NSMenu' 'icon\.isTemplate = true' 'menu bar toolbar icon uses macOS template tinting'

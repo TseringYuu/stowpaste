@@ -9,7 +9,6 @@ BUNDLE_ID="store.aiware.stowpaste"
 APP_VERSION="${STOWPASTE_APP_VERSION:-0.1.1}"
 BUILD_PATH="${SWIFT_BUILD_PATH:-$ROOT_DIR/.build}"
 BUILD_ARCHS=${STOWPASTE_BUILD_ARCHS:-"arm64 x86_64"}
-BUILD_DIR="$BUILD_PATH/apple/Products/Release"
 DIST_DIR="$ROOT_DIR/dist"
 APP_DIR="$DIST_DIR/$DISPLAY_NAME.app"
 CONTENTS_DIR="$APP_DIR/Contents"
@@ -40,10 +39,6 @@ select_codesign_identity() {
 CODESIGN_IDENTITY="$(select_codesign_identity)"
 
 cd "$APP_PACKAGE_DIR"
-SWIFT_ARCH_FLAGS=()
-for arch in $BUILD_ARCHS; do
-  SWIFT_ARCH_FLAGS+=(--arch "$arch")
-done
 SWIFT_RELEASE_FLAGS=(
   -Xswiftc -gnone
   -Xswiftc -file-prefix-map
@@ -51,11 +46,41 @@ SWIFT_RELEASE_FLAGS=(
   -Xswiftc -debug-prefix-map
   -Xswiftc "$ROOT_DIR=."
 )
-swift build -c release --build-path "$BUILD_PATH" "${SWIFT_ARCH_FLAGS[@]}" "${SWIFT_RELEASE_FLAGS[@]}" ${SWIFT_BUILD_FLAGS:-}
+
+# SwiftPM's multi-architecture build path depends on Xcode's private xcbuild
+# helper, which isn't included with the standalone Command Line Tools. Build
+# each slice independently and merge them so the documented Swift toolchain-only
+# workflow still produces a Universal app.
+ARCH_BINARIES=()
+for arch in $BUILD_ARCHS; do
+  ARCH_BUILD_PATH="$BUILD_PATH/architectures/$arch"
+  swift build \
+    -c release \
+    --build-path "$ARCH_BUILD_PATH" \
+    --arch "$arch" \
+    "${SWIFT_RELEASE_FLAGS[@]}" \
+    ${SWIFT_BUILD_FLAGS:-}
+  ARCH_BIN_DIR="$(swift build \
+    -c release \
+    --build-path "$ARCH_BUILD_PATH" \
+    --arch "$arch" \
+    --show-bin-path \
+    ${SWIFT_BUILD_FLAGS:-})"
+  ARCH_BINARY="$ARCH_BIN_DIR/$APP_NAME"
+  if [[ ! -x "$ARCH_BINARY" ]]; then
+    echo "error: missing $arch application binary at $ARCH_BINARY" >&2
+    exit 1
+  fi
+  ARCH_BINARIES+=("$ARCH_BINARY")
+done
 
 rm -rf "$APP_DIR"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
-cp "$BUILD_DIR/$APP_NAME" "$MACOS_DIR/$APP_NAME"
+if [[ "${#ARCH_BINARIES[@]}" -eq 1 ]]; then
+  cp "${ARCH_BINARIES[0]}" "$MACOS_DIR/$APP_NAME"
+else
+  lipo -create "${ARCH_BINARIES[@]}" -output "$MACOS_DIR/$APP_NAME"
+fi
 strip -S -x "$MACOS_DIR/$APP_NAME"
 if [[ -f "$APP_PACKAGE_DIR/Resources/AppIcon.icns" ]]; then
   cp "$APP_PACKAGE_DIR/Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"

@@ -2012,12 +2012,15 @@ extension Color {
 }
 
 private func secondarySurfaceBackground(theme: CustomThemeSettings?, colorScheme: ColorScheme) -> Color {
-    let baseHex = theme.map { colorScheme == .dark ? $0.darkBackground : $0.lightBackground } ?? (colorScheme == .dark ? "#171A1F" : "#F8F8F6")
+    guard let theme else {
+        return Color(nsColor: .controlBackgroundColor).opacity(colorScheme == .dark ? 0.56 : 0.68)
+    }
+    let baseHex = colorScheme == .dark ? theme.darkBackground : theme.lightBackground
     return mixedSurfaceColor(
         baseHex: baseHex,
         colorScheme: colorScheme,
         mixAmount: colorScheme == .dark ? 0.10 : 0.03,
-        opacity: 0.95
+        opacity: colorScheme == .dark ? 0.72 : 0.78
     )
 }
 
@@ -2753,6 +2756,8 @@ final class AppController: NSObject, NSApplicationDelegate {
         window.isReleasedWhenClosed = false
         window.level = .normal
         window.collectionBehavior = [.managed, .fullScreenNone]
+        window.isOpaque = false
+        window.backgroundColor = .clear
         window.setFrameAutosaveName("StowPasteSettings")
         window.contentView = NSHostingView(rootView: SettingsView(model: model, controller: self)
             .environmentObject(model.systemAppearance))
@@ -2771,6 +2776,8 @@ final class AppController: NSObject, NSApplicationDelegate {
         window.title = L10n.manageGroups
         window.isReleasedWhenClosed = false
         window.level = .normal
+        window.isOpaque = false
+        window.backgroundColor = .clear
         window.contentView = NSHostingView(rootView: GroupManagerView(model: model)
             .environmentObject(model.systemAppearance))
         groupWindow = window
@@ -3457,6 +3464,7 @@ struct ClipboardOverlayView: View {
     @ObservedObject var model: AppModel
     let controller: AppController
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @EnvironmentObject private var systemAppearance: SystemAppearance
     @State private var editingTitleID: UUID?
     @State private var editingTitle = ""
@@ -3502,16 +3510,14 @@ struct ClipboardOverlayView: View {
                 }
             }
             .frame(width: panelWidth, height: panelHeight)
-            .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(panelBackground)
-            )
-            .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(panelTint)
-            )
+            .background(AdaptivePanelBackground(tint: panelTint))
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .overlay(panelTextBorderLayer)
+            .shadow(
+                color: Color.black.opacity(effectiveColorScheme == .dark ? 0.30 : 0.16),
+                radius: 22,
+                y: 10
+            )
 
             if model.shouldShowDoublePasteHint {
                 doublePasteHint
@@ -3598,18 +3604,11 @@ struct ClipboardOverlayView: View {
         )
     }
 
-    private var panelBackground: some ShapeStyle {
-        if let theme = model.settings.selectedCustomTheme {
-            return AnyShapeStyle(Color(hex: effectiveColorScheme == .dark ? theme.darkBackground : theme.lightBackground).opacity(0.96))
-        }
-        return effectiveColorScheme == .dark ? AnyShapeStyle(Color(red: 0.09, green: 0.10, blue: 0.12).opacity(0.96)) : AnyShapeStyle(Color(red: 0.98, green: 0.98, blue: 0.97).opacity(0.96))
-    }
-
     private var panelTint: Color {
         if let theme = model.settings.selectedCustomTheme {
-            return Color(hex: theme.panelTint).opacity(effectiveColorScheme == .dark ? 0.24 : 0.52)
+            return Color(hex: theme.panelTint).opacity(effectiveColorScheme == .dark ? 0.18 : 0.12)
         }
-        return effectiveColorScheme == .dark ? Color(red: 0.07, green: 0.08, blue: 0.10).opacity(0.68) : Color.white.opacity(0.52)
+        return effectiveColorScheme == .dark ? Color.black.opacity(0.18) : Color.white.opacity(0.10)
     }
 
     private var effectiveColorScheme: ColorScheme {
@@ -3617,13 +3616,16 @@ struct ClipboardOverlayView: View {
     }
 
     private var panelTextBorderColor: Color {
-        return effectiveColorScheme == .dark ? (panelThemeColors.itemTitle ?? Color.white) : Color.black
+        panelThemeColors.itemTitle ?? Color.primary
     }
 
     private var panelTextBorderLayer: some View {
         RoundedRectangle(cornerRadius: 18, style: .continuous)
             .inset(by: 0.5)
-            .stroke(panelTextBorderColor.opacity(0.3), lineWidth: 1)
+            .stroke(
+                panelTextBorderColor.opacity(colorSchemeContrast == .increased ? 0.40 : 0.16),
+                lineWidth: 1
+            )
     }
 
     private var rowHoverBackground: Color {
@@ -3699,8 +3701,14 @@ struct ClipboardOverlayView: View {
             toolbarTabsScroller
             toolbarActionButtons
         }
-        .padding(.horizontal, 12)
-        .padding(.top, 10)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .adaptiveGlassSurface(
+            cornerRadius: 12,
+            tint: panelThemeColors.primary?.opacity(effectiveColorScheme == .dark ? 0.08 : 0.05)
+        )
+        .padding(.horizontal, 8)
+        .padding(.top, 8)
         .padding(.bottom, 6)
     }
 
@@ -4910,7 +4918,6 @@ private func groupRowBottomBorder(color: Color) -> some View {
 struct IconHitTarget: View {
     let symbol: String
     let active: Bool
-    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.panelThemeColors) private var theme
 
     var body: some View {
@@ -4935,7 +4942,7 @@ struct IconHitTarget: View {
         if let itemTitle = theme.itemTitle {
             return itemTitle
         }
-        return colorScheme == .dark ? Color.white : Color(hex: "#333333")
+        return Color.primary
     }
 }
 
@@ -5253,11 +5260,6 @@ struct GroupManagerView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(L10n.manageGroups)
-                .font(.headline)
-                .foregroundStyle(groupThemeColors.itemTitle ?? Color.primary)
-                .padding(18)
-            Divider()
             if model.customGroups.isEmpty {
                 Text(L10n.noGroups)
                     .font(.system(size: 13))
@@ -5307,11 +5309,20 @@ struct GroupManagerView: View {
         )
     }
 
-    private var groupBackground: Color {
+    private var groupBackground: some View {
         if let theme = model.settings.selectedCustomTheme {
-            return Color(hex: colorScheme == .dark ? theme.darkBackground : theme.lightBackground)
+            return AdaptivePanelBackground(
+                tint: Color(hex: colorScheme == .dark ? theme.darkBackground : theme.lightBackground)
+                    .opacity(colorScheme == .dark ? 0.28 : 0.18),
+                cornerRadius: 0,
+                material: .underWindowBackground
+            )
         }
-        return colorScheme == .dark ? Color(red: 0.09, green: 0.10, blue: 0.12) : Color(red: 0.98, green: 0.98, blue: 0.97)
+        return AdaptivePanelBackground(
+            tint: colorScheme == .dark ? Color.black.opacity(0.10) : Color.white.opacity(0.06),
+            cornerRadius: 0,
+            material: .underWindowBackground
+        )
     }
 
     private var groupSecondaryBackground: Color {
@@ -5439,9 +5450,6 @@ struct SettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text(L10n.settings)
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(settingsThemeColors.itemTitle ?? Color.primary)
                 Spacer()
                 Button(L10n.done) {
                     model.updateSettings(draft)
@@ -5449,7 +5457,8 @@ struct SettingsView: View {
                 }
                 .keyboardShortcut(.defaultAction)
             }
-            .padding(20)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 10)
 
             Divider().opacity(0.18)
 
@@ -5632,19 +5641,28 @@ struct SettingsView: View {
         let isDark = effectiveColorScheme == .dark
         return PanelThemeColors(
             primary: Color.accentColor,
-            textPrimary: isDark ? Color.white : Color(hex: "#333333"),
-            textSecondary: isDark ? Color.white.opacity(0.78) : Color(hex: "#666666"),
-            itemTitle: isDark ? Color.white : Color(hex: "#333333"),
-            itemSecondary: isDark ? Color.white.opacity(0.78) : Color(hex: "#666666"),
-            tertiaryFill: isDark ? Color.white.opacity(0.055) : Color.black.opacity(0.035)
+            textPrimary: Color(nsColor: .labelColor),
+            textSecondary: Color(nsColor: .secondaryLabelColor),
+            itemTitle: Color(nsColor: .labelColor),
+            itemSecondary: Color(nsColor: .secondaryLabelColor),
+            tertiaryFill: Color(nsColor: .quaternaryLabelColor).opacity(isDark ? 0.32 : 0.20)
         )
     }
 
-    private var settingsBackground: Color {
+    private var settingsBackground: some View {
         if let theme = draft.selectedCustomTheme {
-            return Color(hex: effectiveColorScheme == .dark ? theme.darkBackground : theme.lightBackground)
+            return AdaptivePanelBackground(
+                tint: Color(hex: effectiveColorScheme == .dark ? theme.darkBackground : theme.lightBackground)
+                    .opacity(effectiveColorScheme == .dark ? 0.28 : 0.18),
+                cornerRadius: 0,
+                material: .underWindowBackground
+            )
         }
-        return effectiveColorScheme == .dark ? Color(red: 0.09, green: 0.10, blue: 0.12) : Color(red: 0.98, green: 0.98, blue: 0.97)
+        return AdaptivePanelBackground(
+            tint: effectiveColorScheme == .dark ? Color.black.opacity(0.10) : Color.white.opacity(0.06),
+            cornerRadius: 0,
+            material: .underWindowBackground
+        )
     }
 
     private var sectionBackground: Color {
@@ -5741,36 +5759,15 @@ struct DeleteCustomThemeButton: View {
 
 struct SmallSwitchToggle: View {
     @Binding var isOn: Bool
-    @Environment(\.panelThemeColors) private var theme
 
     var body: some View {
-        Button {
-            isOn.toggle()
-        } label: {
-            Capsule()
-                .fill(trackColor)
-                .frame(width: 30, height: 18)
-                .overlay(alignment: isOn ? .trailing : .leading) {
-                    Circle()
-                        .fill(Color.white)
-                        .frame(width: 14, height: 14)
-                        .shadow(color: .black.opacity(0.16), radius: 2, y: 1)
-                        .padding(2)
-                }
-        }
-        .buttonStyle(.plain)
-        .contentShape(Capsule())
-        .animation(.easeInOut(duration: 0.14), value: isOn)
+        Toggle("", isOn: $isOn)
+        .labelsHidden()
+        .toggleStyle(.switch)
+        .controlSize(.small)
         .accessibilityLabel(L10n.launchAtLogin)
         .accessibilityValue(isOn ? L10n.text("开启", "On") : L10n.text("关闭", "Off"))
         .cursor(.pointingHand)
-    }
-
-    private var trackColor: Color {
-        if isOn {
-            return theme.primary ?? Color.accentColor
-        }
-        return theme.tertiaryFill ?? Color.secondary.opacity(0.22)
     }
 }
 
