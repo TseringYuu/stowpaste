@@ -4,8 +4,21 @@ All notable changes to StowPaste are documented here. This project follows seman
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-08
+
+### Added
+
+- Adopted native macOS glass materials for the clipboard panel, Settings, and Group Manager, with Liquid Glass on macOS 26 or later and standard system materials on macOS 14 and 15.
+
+### Changed
+
+- Updated the public English and Chinese DMGs, website downloads, checksums, and release documentation for `v0.1.2`.
+- Rebuilt Universal packaging by compiling Apple silicon and Intel targets before producing the release bundle.
+
 ### Fixed
 
+- Respected Reduce Transparency and Increase Contrast when rendering the app interface.
+- Improved native light and dark appearance adaptation, text contrast, title bars, and the Settings toggle.
 - Made the website GitHub button start with a verified nonzero star count and refresh through a cached public badge endpoint instead of the frequently rate-limited unauthenticated GitHub API.
 
 ## [0.1.1] - 2026-09-04
@@ -48,8 +61,9 @@ Initial public release.
 
 ### Distribution note
 
-The current `v0.1.1` direct download is a DMG. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch. Replacing an existing build may require removing the old Accessibility entry and adding `/Applications/StowPaste.app` again.
+The current `v0.1.2` direct download is a DMG. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch. Replacing an existing build may require removing the old Accessibility entry and adding `/Applications/StowPaste.app` again.
 
-[Unreleased]: https://github.com/TseringYuu/stowpaste/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/TseringYuu/stowpaste/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/TseringYuu/stowpaste/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/TseringYuu/stowpaste/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/TseringYuu/stowpaste/releases/tag/v0.1.0

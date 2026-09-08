@@ -7,7 +7,7 @@
   <p>一个安静待在菜单栏里的 macOS 剪贴板历史工具。复制文本、图片或文件，连续按两次左 Command，随时把它们找回来。</p>
 
   <p>
-    <img alt="StowPaste v0.1.1" src="https://img.shields.io/badge/release-v0.1.1-655DFF?style=for-the-badge">
+    <img alt="StowPaste v0.1.2" src="https://img.shields.io/badge/release-v0.1.2-655DFF?style=for-the-badge">
     <img alt="macOS 14 或更高版本" src="https://img.shields.io/badge/macOS-14%2B-1C1D21?style=for-the-badge&logo=apple&logoColor=white">
     <img alt="Apple silicon 与 Intel" src="https://img.shields.io/badge/build-Universal-18B981?style=for-the-badge">
     <img alt="数据保存在本机" src="https://img.shields.io/badge/data-local--first-F05A47?style=for-the-badge">
@@ -22,7 +22,7 @@
 </div>
 
 > [!IMPORTANT]
-> ### [↓ 下载 StowPaste v0.1.1（中文 DMG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.1/StowPaste-v0.1.1-zh-CN.dmg)
+> ### [↓ 下载 StowPaste v0.1.2（中文 DMG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.2/StowPaste-v0.1.2-zh-CN.dmg)
 > 适用于 macOS 14 或更高版本，兼容 Apple silicon 与 Intel Mac。无需账户。
 
 <p align="center">
@@ -32,7 +32,7 @@
   &nbsp;·&nbsp;
   <a href="https://stowpaste.aiware.store/privacy">隐私说明</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.1/StowPaste-v0.1.1-zh-CN.dmg.sha256">SHA-256</a>
+  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.2/StowPaste-v0.1.2-zh-CN.dmg.sha256">SHA-256</a>
 </p>
 
 ![StowPaste 官网与下载界面](docs/assets/readme-hero.png)
@@ -51,12 +51,12 @@
 | **TEXT / IMAGE / FILE** | 不把所有内容混成纯文本 | 保存文本、图片和文件历史；图片带预览并自动进入图片分组，文件保留名称与路径信息。 |
 | **GROUPS** | 建立自己的秩序 | 收藏、置顶、删除、重命名历史项；创建、编辑并排序分组，也可以把内容直接拖到分组标签。 |
 | **PANEL** | 适应当前工作区 | 支持键盘导航和鼠标操作；面板可以移动、缩放，或钉在屏幕上保持显示。 |
-| **THEMES** | 看起来也属于你 | 跟随系统浅色或深色外观，也可以在本机生成并保存自定义配色主题。 |
+| **THEMES** | 看起来也属于你 | 跟随系统外观与原生 macOS 材质，也可以在本机生成并保存自定义配色主题。 |
 | **RETENTION** | 留多久，由你决定 | 设置普通历史的保留期限；收藏、置顶和自定义分组中的内容不会被定期清理。 |
 
 ## 安装
 
-1. 下载并打开 [StowPaste v0.1.1 中文 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.1/StowPaste-v0.1.1-zh-CN.dmg)。
+1. 下载并打开 [StowPaste v0.1.2 中文 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.2/StowPaste-v0.1.2-zh-CN.dmg)。
 2. 将 `StowPaste.app` 拖到磁盘映像中的「应用程序」快捷方式上。
 3. 从「应用程序」启动 StowPaste；macOS 可能提示无法验证开发者。
 4. 打开「系统设置 → 隐私与安全性」，向下滚动到「安全性」，为 StowPaste 选择「仍要打开」，并按提示确认身份。
@@ -65,7 +65,7 @@
 辅助功能权限用于监听全局快捷键、恢复原来的输入焦点，以及把选中的内容粘贴回当前应用。
 
 > [!NOTE]
-> `v0.1.1` 是不使用付费 Apple Developer 账户的独立开源构建。应用本体使用不包含个人身份的 ad-hoc 签名，应用与磁盘映像未经 Developer ID 签名或 Apple 公证。请先检查源码与 SHA-256，再为 StowPaste 创建上述单应用例外；不要全局关闭 Gatekeeper。
+> `v0.1.2` 是不使用付费 Apple Developer 账户的独立开源构建。应用本体使用不包含个人身份的 ad-hoc 签名，应用与磁盘映像未经 Developer ID 签名或 Apple 公证。请先检查源码与 SHA-256，再为 StowPaste 创建上述单应用例外；不要全局关闭 Gatekeeper。
 >
 > 更新时请先退出正在运行的旧版本，再覆盖应用。如果「系统设置 → 隐私与安全性 → 辅助功能」里已经启用 StowPaste，但应用仍提示未授权，请删除旧的 StowPaste 条目，点 `+` 重新加入 `/Applications/StowPaste.app`，然后退出并重新打开 StowPaste。
 
@@ -75,13 +75,13 @@
 下载官方校验文件，或在终端执行：
 
 ```bash
-shasum -a 256 StowPaste-v0.1.1-zh-CN.dmg
+shasum -a 256 StowPaste-v0.1.2-zh-CN.dmg
 ```
 
 预期 SHA-256：
 
 ```text
-fa079ae72de43632e58c2d85c671d68ffaf5ffcbd0647f41b0486c2a085150c2
+4dc984deaf2bd61bf32d9c0e390939028c7b0de4332a27da08e33a5601003b76
 ```
 
 </details>

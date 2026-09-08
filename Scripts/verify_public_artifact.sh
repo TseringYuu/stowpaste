@@ -76,7 +76,7 @@ verify_dmg() (
   fi
 )
 
-verify_dmg "StowPaste-v0.1.1.dmg"
-verify_dmg "StowPaste-v0.1.1-zh-CN.dmg"
+verify_dmg "StowPaste-v0.1.2.dmg"
+verify_dmg "StowPaste-v0.1.2-zh-CN.dmg"
 
 echo "public artifact checks passed"

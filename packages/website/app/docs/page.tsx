@@ -21,7 +21,7 @@ const sections = [
   {
     title: "Install and authorize",
     body:
-      "StowPaste v0.1.1 is an open-source build that is not Developer ID signed or notarized by Apple. Open the DMG, drag StowPaste into Applications, then try to launch it. macOS may block the app once. Create a one-app exception only after reviewing the source and SHA-256 checksum.",
+      "StowPaste v0.1.2 is an open-source build that is not Developer ID signed or notarized by Apple. Open the DMG, drag StowPaste into Applications, then try to launch it. macOS may block the app once. Create a one-app exception only after reviewing the source and SHA-256 checksum.",
     bullets: [
       "Open System Settings → Privacy & Security, scroll to Security, then choose Open Anyway for StowPaste.",
       "Choose Open Anyway, authenticate if prompted, and launch StowPaste from Applications. Never disable Gatekeeper globally.",
@@ -52,7 +52,7 @@ const sections = [
   {
     title: "Themes and retention",
     body:
-      "Choose System, Light, Dark, or a local custom theme in Settings. Custom theme prompts are handled on your Mac and produce a set of color options you can preview and save. You can also choose how long ordinary history is kept, from one week to unlimited.",
+      "StowPaste uses native macOS materials and adapts its panel, Settings, and Group Manager to the system appearance. Choose System, Light, Dark, or a local custom theme in Settings, then choose how long ordinary history is kept, from one week to unlimited.",
     bullets: [
       "Custom themes can be deleted or switched without changing your history.",
       "Retention options include week, month, quarter, half-year, year, three years, and unlimited.",

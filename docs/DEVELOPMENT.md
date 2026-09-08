@@ -57,7 +57,7 @@ The current release channel is the versioned DMG published on `stowpaste.aiware.
 
 Generated artifacts are written to `dist/` and must not be committed from that directory. The website's public download must be copied from the final verified artifact and accompanied by its SHA-256 file.
 
-The published `v0.1.1` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
+The published `v0.1.2` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
 
 ## Verification
 
@@ -73,9 +73,9 @@ The suite covers Swift build and tests, global shortcuts, focus restoration, pan
 Before a release, also inspect the package directly:
 
 ```bash
-hdiutil verify packages/website/public/downloads/StowPaste-v0.1.1.dmg
-hdiutil verify packages/website/public/downloads/StowPaste-v0.1.1-zh-CN.dmg
-shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.1*.dmg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.2.dmg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.2-zh-CN.dmg
+shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.2*.dmg
 ```
 
 ## Product and network rules
@@ -83,7 +83,7 @@ shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.1*.dmg
 - Clipboard history, images, groups, favorites, and settings remain local to the Mac.
 - The desktop target must not add network requests or a network client entitlement without an explicit product decision, privacy review, tests, and release documentation.
 - New permissions, data flows, background work, or persistence formats require migration and regression coverage.
-- The website reads the public GitHub star count for the repository header; this is separate from the desktop application's data path.
+- The website reads the public GitHub star count through a cached public badge endpoint; this is separate from the desktop application's data path.
 
 ## Signing
 
@@ -115,9 +115,9 @@ Project-authored source is licensed under Apache License 2.0. Contributions are 
 1. Update `CHANGELOG.md` and version metadata.
 2. Run `./Scripts/verify_all.sh` and `git diff --check`.
 3. Audit staged files for credentials, signing material, clipboard contents, local state, and generated build directories.
-4. Build the app and installer from a clean checkout.
+4. Build the app and both localized DMGs from a clean checkout.
 5. Verify the universal architectures, package payload, signatures, notarization status, and SHA-256 checksum.
-6. Copy the exact PKG and checksum into the website download directory.
+6. Copy the exact DMGs and checksums into the website download directory.
 7. Verify the public download matches the local release artifact.
 8. Create the release tag and publish release notes that match the shipped code.
 

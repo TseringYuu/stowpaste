@@ -35,7 +35,7 @@ const sections = [
   {
     title: "Website and GitHub",
     body:
-      "The website requests the public StowPaste repository record from GitHub to display its current star count. GitHub receives the normal network information associated with that browser request. The desktop app does not make this request."
+      "The website requests a cached public badge endpoint to display the current StowPaste star count. That service receives the normal network information associated with the browser request. The desktop app does not make this request."
   },
   {
     title: "Tracking",
