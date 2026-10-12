@@ -266,9 +266,13 @@ button { font: inherit; }
 @media (max-width: 520px) {
   .site-page { padding: 0; }
   .clipboard-shell { min-height: 100vh; border: 0; border-radius: 0; box-shadow: none; }
-  .titlebar { min-height: 50px; padding: 0 10px; }
+  .titlebar { min-height: 50px; padding: 0 10px; grid-template-columns: auto minmax(0, 1fr); }
   .window-dots { display: none; }
   .brand { font-size: 0.82rem; }
+  .brand > span { display: none; }
+  .titlebar-nav { justify-self: end; gap: 8px; }
+  .titlebar .github-link > span { display: none; }
+  .titlebar .header-download > span { white-space: nowrap; }
   .version-link { padding: 5px 7px; }
   .content-toolbar { padding: 0 12px; }
   .toolbar-meta span:first-child { display: none; }

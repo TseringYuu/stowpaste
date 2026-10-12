@@ -19,6 +19,7 @@ All notable changes to StowPaste are documented here. This project follows seman
 ### Fixed
 
 - Vertically centered the scrollable toolbar tabs to align with the action buttons.
+- Prevented the guide and privacy page header controls from overlapping on narrow screens.
 
 ## [0.1.2] - 2026-09-08
 
