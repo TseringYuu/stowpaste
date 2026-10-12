@@ -7,18 +7,18 @@ export const site = {
   versionTag: "v0.1.3",
   minimumSystemVersion: "macOS 14 or later",
   architecture: "Apple silicon + Intel",
-  downloadUrl: "/downloads/StowPaste-v0.1.3.dmg?build=ddb9e03b",
-  downloadUrlZhCN: "/downloads/StowPaste-v0.1.3-zh-CN.dmg?build=4dc984de",
+  downloadUrl: "/downloads/StowPaste-v0.1.3.dmg?build=0a804ad5",
+  downloadUrlZhCN: "/downloads/StowPaste-v0.1.3-zh-CN.dmg?build=fa6f05cd",
   checksumUrl: "/downloads/StowPaste-v0.1.3.dmg.sha256",
   checksumUrlZhCN: "/downloads/StowPaste-v0.1.3-zh-CN.dmg.sha256",
-  checksumSha256: "ddb9e03b70ed477f7dc42734aba0ff9c4d5c509dc554640e97c0cc27c4571e0e",
-  checksumSha256ZhCN: "4dc984deaf2bd61bf32d9c0e390939028c7b0de4332a27da08e33a5601003b76",
+  checksumSha256: "0a804ad5fa08cde2215847afaab87fec1836b9c08bfe5f5346650792724f8e9c",
+  checksumSha256ZhCN: "fa6f05cd9e1c2185ee1720c3c0a4449ff979114a127268749a09775ad58d6ec5",
   privacyUrl: "/privacy",
   docsUrl: "/docs",
   githubUrl: "https://github.com/TseringYuu/stowpaste",
   githubStarsUrl: "https://img.shields.io/github/stars/TseringYuu/stowpaste.json",
   appleOpenAnywayUrl: "https://support.apple.com/102445",
-  githubStarsFallback: 7,
+  githubStarsFallback: 10,
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "support@aiware.store"
 };
 

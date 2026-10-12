@@ -81,7 +81,7 @@ shasum -a 256 StowPaste-v0.1.3.dmg
 Expected SHA-256:
 
 ```text
-ddb9e03b70ed477f7dc42734aba0ff9c4d5c509dc554640e97c0cc27c4571e0e
+0a804ad5fa08cde2215847afaab87fec1836b9c08bfe5f5346650792724f8e9c
 ```
 
 </details>

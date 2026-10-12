@@ -24,6 +24,7 @@ secrets.*
 # Node / website
 node_modules/
 packages/website/.next/
+packages/website/out/
 packages/website/tsconfig.tsbuildinfo
 npm-debug.log*
 

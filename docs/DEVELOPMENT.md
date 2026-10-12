@@ -76,6 +76,16 @@ Generated artifacts are written to `dist/` and must not be committed from that d
 
 The published `v0.1.3` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
 
+### Static website deployment
+
+The production website is served by nginx. Export the maintained website, including the guide, privacy page, and read-only download metadata, rather than updating a separate handwritten homepage:
+
+```bash
+STOWPASTE_STATIC_EXPORT=1 npm run website:build
+```
+
+Deploy `packages/website/out/` to the StowPaste document root. Preserve old versioned downloads and previously deployed `_next` chunks so existing links and open pages continue to work. The unextended `/api/downloads` and `/api/health` files need nginx `default_type application/json`. The static channel does not provide the optional POST feedback endpoint; user support remains the documented email link.
+
 ## Verification
 
 Run the complete repository suite:

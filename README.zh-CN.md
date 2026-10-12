@@ -81,7 +81,7 @@ shasum -a 256 StowPaste-v0.1.3-zh-CN.dmg
 预期 SHA-256：
 
 ```text
-4dc984deaf2bd61bf32d9c0e390939028c7b0de4332a27da08e33a5601003b76
+fa6f05cd9e1c2185ee1720c3c0a4449ff979114a127268749a09775ad58d6ec5
 ```
 
 </details>
