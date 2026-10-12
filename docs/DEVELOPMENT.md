@@ -7,11 +7,11 @@ This guide is for maintainers building, testing, packaging, and releasing StowPa
 - macOS 14 or later.
 - Xcode or a Swift 6.3+ toolchain.
 - Node.js and npm for website development.
-- A stable signing identity when producing an installable app:
+- A stable signing identity when producing a Developer ID or development build:
   - `Developer ID Application` for direct release builds.
   - `Apple Development` for local development.
 
-Set `STOWPASTE_ALLOW_AD_HOC_SIGNING=1` only for local builds when no signing identity is available. Reinstalling builds with a different identity may require users to grant Accessibility permission again.
+The public DMG lane deliberately uses identity-free ad-hoc signing, as disclosed on the download page. `Scripts/build_dmg.sh` selects that signature explicitly. For a local app bundle without a signing identity, set `STOWPASTE_ALLOW_AD_HOC_SIGNING=1`. Reinstalling builds with a different identity may require users to grant Accessibility permission again.
 
 ## Repository structure
 
@@ -46,6 +46,23 @@ Create the app bundle:
 
 The app bundle is written to `dist/StowPaste.app`.
 
+### Command Line Tools compatibility
+
+The tests use Swift Testing, included with the required Swift toolchain. A complete Xcode installation supports the normal commands above. On the release machine, Swift 6.4 Command Line Tools with the macOS 27 SDK could not resolve `SwiftUIMacros`; the installed macOS 26.5 SDK and native build system were used instead:
+
+```bash
+swift build --package-path packages/app --build-system native \
+  --sdk /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk
+```
+
+To run the repository checks in that environment, also expose the bundled Swift Testing frameworks:
+
+```bash
+SWIFT_BUILD_FLAGS='--build-system native --sdk /Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk -Xswiftc -F -Xswiftc /Library/Developer/CommandLineTools/Library/Developer/Frameworks -Xlinker -F -Xlinker /Library/Developer/CommandLineTools/Library/Developer/Frameworks' ./Scripts/verify_all.sh
+```
+
+These are build-machine compatibility options; the distributed app still targets macOS 14 or later. Use an SDK path that exists on the machine performing the build.
+
 ## Direct-distribution packaging
 
 The current release channel is the versioned DMG published on `stowpaste.aiware.store`.
@@ -57,7 +74,7 @@ The current release channel is the versioned DMG published on `stowpaste.aiware.
 
 Generated artifacts are written to `dist/` and must not be committed from that directory. The website's public download must be copied from the final verified artifact and accompanied by its SHA-256 file.
 
-The published `v0.1.2` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
+The published `v0.1.3` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
 
 ## Verification
 
@@ -70,12 +87,14 @@ git diff --check
 
 The suite covers Swift build and tests, global shortcuts, focus restoration, panel behavior, history rows, custom groups, retention, themes, local data boundaries, installer payload layout, architecture, repository structure, and website type checking.
 
+The current Swift Testing suite includes shortcut modifier/input protection, adjacent selection after deletion, persisted favorite/group cleanup, original-image loading, missing-file preview behavior, and removal of retired hint settings. For visual QA, the panel smoke mode can stay open with `STOWPASTE_PANEL_SMOKE_TEST_KEEP_OPEN=1`; always provide a separate `STOWPASTE_APPLICATION_SUPPORT_DIR` so the test does not write to a user's history.
+
 Before a release, also inspect the package directly:
 
 ```bash
-hdiutil verify packages/website/public/downloads/StowPaste-v0.1.2.dmg
-hdiutil verify packages/website/public/downloads/StowPaste-v0.1.2-zh-CN.dmg
-shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.2*.dmg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.3.dmg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.3-zh-CN.dmg
+shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.3*.dmg
 ```
 
 ## Product and network rules

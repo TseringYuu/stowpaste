@@ -95,6 +95,12 @@ The marketing site has no product forms or overlays. Support remains a mail link
 
 Use the actual StowPaste application icon for identity. Utility symbols are text glyphs or simple CSS shapes with visible labels; icon-only navigation is avoided.
 
+### Native clipboard panel
+
+The macOS application keeps its own quiet utility register. `GlassSurfaces.swift` owns native material and transparency behavior; `PanelThemeColors` in `StowPaste.swift` owns system/custom theme adaptation. Image previews reuse the existing 18-point panel shell, 10-point content corners, system typography, shared `IconButton`, and theme-derived fills and text. They replace the history body inside the same panel, without introducing a separate visual identity or changing panel geometry. Images fit proportionally without cropping; missing originals have a localized empty state.
+
+`AppModel` owns selection, deletion, and preview lifecycle; `PanelKeyboardActionPolicy` routes plain Backspace and Space through the event tap and the focused native panel. Title/other text editing, modified key chords, group forms, and other app windows retain their normal input. Holding a key does not repeat a deletion or repeatedly toggle preview. Preview closes with Space, Escape, its close button, a tab/group change, or panel dismissal. Explicit Backspace deletion applies to the selected history record, including the current clipboard record, while leaving the system clipboard and source files intact; the existing mouse protection for the current clipboard record remains.
+
 ### Motion
 
 Paper drift is continuous but slow, GPU-rendered, and non-interactive. Motion uses gravity, terminal velocity, per-sheet air resistance, lateral gusts, flutter torque, and independent pitch/yaw oscillation rather than uniform vertical translation. The orchestrated moment is the transition from scattered particles to an aligned archive grid when download receives hover or focus. Once aligned, the archive continues as a slow top-to-bottom conveyor: rows cross the lower boundary and wrap seamlessly to the top while retaining strict columns and spacing. Reduced-motion starts in a static ordered state and disables CSS transitions. The canvas is `aria-hidden` and never owns focus or pointer events.

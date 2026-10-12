@@ -20,7 +20,12 @@ const sections = [
   {
     title: "Retention and deletion",
     body:
-      "Choose a retention window in Settings, from one week to unlimited. You can delete individual entries or clear the full history. Favorites, pinned items, and items in custom groups are protected from automatic cleanup."
+      "Choose a retention window in Settings, from one week to unlimited. You can delete individual entries, including with Backspace, or clear the full history. Deleting an entry removes its saved history and any unused stored image copy, while leaving the system clipboard and original source files intact. Favorites, pinned items, and items in custom groups are protected from automatic cleanup; that protection does not prevent an explicit deletion."
+  },
+  {
+    title: "Image previews",
+    body:
+      "Image previews read the original clipboard image copy or referenced local image file on your Mac. Previewing does not upload the image to an external service."
   },
   {
     title: "Custom themes",

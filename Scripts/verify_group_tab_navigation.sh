@@ -83,7 +83,7 @@ require_source 'LinearGradient\(colors: \[\.clear, \.black\]' 'toolbar tabs lead
 require_source 'LinearGradient\(colors: \[\.black, \.clear\]' 'toolbar tabs trailing fade transitions from opaque to transparent'
 reject_region_source 'private var toolbarTabsScroller: some View' 'private var toolbarActionButtons' 'showsIndicators: true' 'tabs scrollbar should be hidden without disabling horizontal scrolling'
 require_region_source 'ForEach\(ClipTab\.allCases\)' 'ForEach\(model\.customGroups\)' 'conditionalDrop\(enabled: model\.canPin\(to: tab\)' 'only manually pinnable standard tabs expose drop targets'
-require_region_source 'ForEach\(model\.customGroups\)' '\.padding\(\.bottom, 4\)' 'group: group' 'all custom group tabs are drop targets'
+require_region_source 'ForEach\(model\.customGroups\)' '\.padding\(\.vertical, 2\)' 'group: group' 'all custom group tabs are drop targets'
 require_source '\.panelTooltip\("\\\(group\.name\) · \\\(group\.itemIDs\.count\)", tooltip: \$tooltip\)' 'custom group tab tooltips show their item count like built-in tabs'
 require_source 'func canPin\(to tab: ClipTab\) -> Bool' 'only manually pinnable built-in tabs can receive added items'
 require_source 'return tab != \.image && tab != \.file' 'image and file tabs reject manual item additions'

@@ -3,14 +3,14 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://stowpaste.aiware.store",
   description:
     "StowPaste is a quiet macOS menu bar utility for keeping text, images, and files ready to paste.",
-  version: "0.1.2",
-  versionTag: "v0.1.2",
+  version: "0.1.3",
+  versionTag: "v0.1.3",
   minimumSystemVersion: "macOS 14 or later",
   architecture: "Apple silicon + Intel",
-  downloadUrl: "/downloads/StowPaste-v0.1.2.dmg?build=ddb9e03b",
-  downloadUrlZhCN: "/downloads/StowPaste-v0.1.2-zh-CN.dmg?build=4dc984de",
-  checksumUrl: "/downloads/StowPaste-v0.1.2.dmg.sha256",
-  checksumUrlZhCN: "/downloads/StowPaste-v0.1.2-zh-CN.dmg.sha256",
+  downloadUrl: "/downloads/StowPaste-v0.1.3.dmg?build=ddb9e03b",
+  downloadUrlZhCN: "/downloads/StowPaste-v0.1.3-zh-CN.dmg?build=4dc984de",
+  checksumUrl: "/downloads/StowPaste-v0.1.3.dmg.sha256",
+  checksumUrlZhCN: "/downloads/StowPaste-v0.1.3-zh-CN.dmg.sha256",
   checksumSha256: "ddb9e03b70ed477f7dc42734aba0ff9c4d5c509dc554640e97c0cc27c4571e0e",
   checksumSha256ZhCN: "4dc984deaf2bd61bf32d9c0e390939028c7b0de4332a27da08e33a5601003b76",
   privacyUrl: "/privacy",
@@ -39,7 +39,7 @@ export const features = [
     source: "Preview",
     age: "2 min",
     title: "Text, images, and files",
-    text: "Recent images have previews and their own tab, while files retain names and locations instead of becoming anonymous text."
+    text: "Press Space or use the preview button to view an original image. Press Space or Escape to return. Images have their own tab, and files keep their names and locations."
   },
   {
     id: "file",
@@ -48,7 +48,7 @@ export const features = [
     source: "Finder",
     age: "8 min",
     title: "Favorites, pins, and groups",
-    text: "Favorite, rename, pin, delete, and drag items into custom groups. Reorder favorites and groups around the way you already work."
+    text: "Favorite, rename, pin, and drag items into custom groups. Press Backspace to delete the selected record, then continue from its neighbor. Reorder favorites and groups around the way you already work."
   },
   {
     id: "theme",

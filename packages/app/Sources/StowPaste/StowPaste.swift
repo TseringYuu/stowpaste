@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import Darwin
 import Foundation
 import ServiceManagement
@@ -157,6 +158,12 @@ enum L10n {
     static var favorite: String { text("收藏", "Favorite") }
     static var unfavorite: String { text("取消收藏", "Unfavorite") }
     static var delete: String { text("删除", "Delete") }
+    static var deleteShortcut: String { text("删除（Backspace）", "Delete (Backspace)") }
+    static var previewImage: String { text("预览图片", "Preview Image") }
+    static var previewImageShortcut: String { text("预览图片（空格）", "Preview Image (Space)") }
+    static var closeImagePreview: String { text("关闭预览", "Close Preview") }
+    static var imagePreviewUnavailable: String { text("无法预览图片", "Image unavailable") }
+    static var imagePreviewUnavailableDetail: String { text("原图可能已被移动或删除。", "The original image may have been moved or deleted.") }
     static var close: String { text("关闭", "Close") }
     static var accessibilityNeeded: String { text("需要辅助功能权限才能在粘贴时唤起面板", "Accessibility permission is required to show the panel when pasting") }
     static var authorize: String { text("授权", "Authorize") }
@@ -218,10 +225,6 @@ enum L10n {
     static var addToGroup: String { text("添加至分组", "Add to Group") }
     static var noGroups: String { text("暂无分组", "No Groups") }
     static var reorder: String { text("拖拽排序", "Drag to reorder") }
-    static func doublePasteTip(_ hotkey: String) -> String {
-        text("再次按下 \(hotkey) 直接粘贴内容", "Press \(hotkey) again to paste directly")
-    }
-    static var neverShow: String { text("不再提示", "Don't show again") }
     static var copiedFromPrefix: String { text("复制自", "Copied from") }
     static func copiedFrom(_ appName: String) -> String { text("复制自 \(appName)", "Copied from \(appName)") }
     static var justNow: String { text("刚刚", "Just now") }
@@ -382,8 +385,6 @@ struct AppSettings: Codable, Equatable {
     var historyRetentionPeriod: HistoryRetentionPeriod = .quarter
     var theme = "system"
     var customThemes: [CustomThemeSettings] = []
-    var hideDoublePasteHint = false
-    var usedDoublePaste = false
     var pastePanelHotkey = HotkeySettings()
 
     enum CodingKeys: String, CodingKey {
@@ -391,8 +392,6 @@ struct AppSettings: Codable, Equatable {
         case historyRetentionPeriod
         case theme
         case customThemes
-        case hideDoublePasteHint
-        case usedDoublePaste
         case pastePanelHotkey
     }
 
@@ -404,8 +403,6 @@ struct AppSettings: Codable, Equatable {
         historyRetentionPeriod = try container.decodeIfPresent(HistoryRetentionPeriod.self, forKey: .historyRetentionPeriod) ?? .quarter
         theme = try container.decodeIfPresent(String.self, forKey: .theme) ?? "system"
         customThemes = try container.decodeIfPresent([CustomThemeSettings].self, forKey: .customThemes) ?? []
-        hideDoublePasteHint = try container.decodeIfPresent(Bool.self, forKey: .hideDoublePasteHint) ?? false
-        usedDoublePaste = try container.decodeIfPresent(Bool.self, forKey: .usedDoublePaste) ?? false
         pastePanelHotkey = try container.decodeIfPresent(HotkeySettings.self, forKey: .pastePanelHotkey) ?? HotkeySettings()
     }
 
@@ -415,8 +412,6 @@ struct AppSettings: Codable, Equatable {
         try container.encode(historyRetentionPeriod, forKey: .historyRetentionPeriod)
         try container.encode(theme, forKey: .theme)
         try container.encode(customThemes, forKey: .customThemes)
-        try container.encode(hideDoublePasteHint, forKey: .hideDoublePasteHint)
-        try container.encode(usedDoublePaste, forKey: .usedDoublePaste)
         try container.encode(pastePanelHotkey, forKey: .pastePanelHotkey)
     }
 
@@ -825,6 +820,12 @@ struct FavoriteOrderItem: Codable, Equatable {
     var rank: Int
 }
 
+struct ClipboardImagePreview {
+    let entryID: UUID
+    let title: String
+    let image: NSImage?
+}
+
 struct PersistedState: Codable {
     var settings: AppSettings
     var history: [ClipboardEntry]
@@ -912,6 +913,8 @@ final class AppModel: ObservableObject {
     @Published var panelContentSize = PanelMetrics.defaultContentSize()
     @Published var accessibilityTrusted = AXIsProcessTrusted()
     @Published var titleEditing = false
+    @Published var historyActionsEnabled = true
+    @Published var imagePreview: ClipboardImagePreview?
     @Published var themeOptions: [AIThemeOption] = []
     @Published var themeGenerationStatus = ""
     @Published var themeGenerationError: String?
@@ -1022,6 +1025,30 @@ final class AppModel: ObservableObject {
         }
     }
 
+    func canPreviewImage(_ entry: ClipboardEntry) -> Bool {
+        entry.kind == .image || isImageFileEntry(entry)
+    }
+
+    func showImagePreview(for entry: ClipboardEntry) {
+        guard canPreviewImage(entry) else { return }
+        selectedID = entry.id
+        let image: NSImage?
+        if entry.kind == .image {
+            image = loadImageData(for: entry).flatMap(NSImage.init(data:))
+        } else {
+            image = entry.fileURLs.first.flatMap(NSImage.init(contentsOf:))
+        }
+        imagePreview = ClipboardImagePreview(entryID: entry.id, title: entry.title, image: image)
+    }
+
+    func toggleImagePreview() {
+        if imagePreview != nil {
+            imagePreview = nil
+        } else if let entry = selectedEntry {
+            showImagePreview(for: entry)
+        }
+    }
+
     func showOverlay() {
         activeTab = .all
         activeGroupID = nil
@@ -1029,6 +1056,8 @@ final class AppModel: ObservableObject {
         accessibilityTrusted = AXIsProcessTrusted()
         panelContentSize = PanelMetrics.clampedContentSize(panelContentSize)
         titleEditing = false
+        historyActionsEnabled = true
+        imagePreview = nil
         overlayVisible = true
         if selectedID == nil || !visibleHistory.contains(where: { $0.id == selectedID }) {
             selectedID = visibleHistory.first?.id
@@ -1037,6 +1066,7 @@ final class AppModel: ObservableObject {
 
     func hideOverlay() {
         titleEditing = false
+        imagePreview = nil
         overlayVisible = false
     }
 
@@ -1217,12 +1247,18 @@ final class AppModel: ObservableObject {
     }
 
     func delete(_ entry: ClipboardEntry) {
+        let selectedIndex = visibleHistory.firstIndex { $0.id == entry.id }
         history.removeAll { $0.id == entry.id }
+        favoriteOrder.removeAll { $0 == entry.id }
         for index in customGroups.indices {
             customGroups[index].itemIDs.removeAll { $0 == entry.id }
         }
-        if selectedID == entry.id {
-            selectedID = visibleHistory.first?.id
+        if selectedID == entry.id || selectedID == nil {
+            let remaining = visibleHistory
+            selectedID = remaining.isEmpty ? nil : remaining[min(selectedIndex ?? 0, remaining.count - 1)].id
+        }
+        if imagePreview?.entryID == entry.id {
+            imagePreview = nil
         }
         pruneImageStore()
         save()
@@ -1363,20 +1399,6 @@ final class AppModel: ObservableObject {
             next.theme = "system"
         }
         updateSettings(next)
-    }
-
-    func dismissDoublePasteHint() {
-        settings.hideDoublePasteHint = true
-        save()
-    }
-
-    func markDoublePasteUsed() {
-        settings.usedDoublePaste = true
-        save()
-    }
-
-    var shouldShowDoublePasteHint: Bool {
-        !settings.hideDoublePasteHint && !settings.usedDoublePaste
     }
 
     func toast(_ message: String) {
@@ -2143,8 +2165,38 @@ enum PanelPresentationPositioning {
 }
 
 enum PanelKeyboardActionPolicy {
+    enum HistoryAction: Equatable {
+        case delete
+        case toggleImagePreview
+        case closeImagePreview
+        case ignore
+    }
+
     static func shouldPasteOnEnter(titleEditing: Bool) -> Bool {
         !titleEditing
+    }
+
+    static func historyAction(
+        keyCode: UInt16,
+        modifierFlags: NSEvent.ModifierFlags,
+        editingText: Bool,
+        historyActionsEnabled: Bool,
+        previewVisible: Bool
+    ) -> HistoryAction? {
+        guard !editingText, historyActionsEnabled,
+              modifierFlags.intersection([.command, .option, .control, .shift]).isEmpty else { return nil }
+        if previewVisible {
+            switch keyCode {
+            case 0x31, 0x35: return .closeImagePreview
+            case 0x33, 0x75, 0x24, 0x4C, 0x7D, 0x7E: return .ignore
+            default: return nil
+            }
+        }
+        switch keyCode {
+        case 0x33, 0x75: return .delete
+        case 0x31: return .toggleImagePreview
+        default: return nil
+        }
     }
 }
 
@@ -2164,6 +2216,9 @@ final class ClipboardPanel: NSPanel {
     }
 
     override func sendEvent(_ event: NSEvent) {
+        if event.type == .keyDown, controller?.handleHistoryKeyDown(event) == true {
+            return
+        }
         if event.type == .leftMouseDown, routePanelInteraction(with: event) {
             return
         }
@@ -2409,6 +2464,10 @@ final class AppController: NSObject, NSApplicationDelegate {
         guard ProcessInfo.processInfo.environment["STOWPASTE_PANEL_SMOKE_TEST"] == "1" else { return false }
         print("panel smoke test starting")
         DispatchQueue.main.async {
+            if ProcessInfo.processInfo.environment["STOWPASTE_PANEL_SMOKE_TEST_KEEP_OPEN"] == "1" {
+                self.model.panelPinned = true
+                self.updatePanelPinnedSnapshot()
+            }
             self.showPanelCentered()
             self.verifyPanelSmokeTestVisibility(remainingAttempts: 10)
         }
@@ -2421,6 +2480,9 @@ final class AppController: NSObject, NSApplicationDelegate {
                 print("panel smoke test visible")
                 if ProcessInfo.processInfo.environment["STOWPASTE_PANEL_FOCUS_SMOKE_TEST"] == "1" {
                     print("panel smoke test active=\(NSApp.isActive) key=\(self.panel?.isKeyWindow == true)")
+                }
+                if ProcessInfo.processInfo.environment["STOWPASTE_PANEL_SMOKE_TEST_KEEP_OPEN"] == "1" {
+                    return
                 }
                 exit(0)
             }
@@ -3305,6 +3367,16 @@ final class AppController: NSObject, NSApplicationDelegate {
         }
 
         if panel?.isVisible == true, type == .keyDown {
+            if handleHistoryShortcut(
+                keyCode: UInt16(keyCode),
+                modifierFlags: NSEvent.ModifierFlags(rawValue: UInt(event.flags.rawValue)),
+                isRepeat: event.getIntegerValueField(.keyboardEventAutorepeat) != 0
+            ) {
+                return nil
+            }
+            if model.imagePreview != nil {
+                return Unmanaged.passUnretained(event)
+            }
             if !model.titleEditing,
                let index = matchesCommandNumberShortcut(event) {
                 DispatchQueue.main.async { self.pasteVisibleItem(at: index) }
@@ -3348,11 +3420,46 @@ final class AppController: NSObject, NSApplicationDelegate {
         model.pasteVisibleItem(at: index, using: self)
     }
 
+    func handleHistoryKeyDown(_ event: NSEvent) -> Bool {
+        handleHistoryShortcut(keyCode: event.keyCode, modifierFlags: event.modifierFlags, isRepeat: event.isARepeat)
+    }
+
+    private func handleHistoryShortcut(keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags, isRepeat: Bool) -> Bool {
+        guard panel?.isVisible == true,
+              !NSApp.isActive || NSApp.keyWindow === panel else { return false }
+        let editingText = model.titleEditing
+            || (panel?.firstResponder as? NSTextView)?.isEditable == true
+        guard let action = PanelKeyboardActionPolicy.historyAction(
+            keyCode: keyCode,
+            modifierFlags: modifierFlags,
+            editingText: editingText,
+            historyActionsEnabled: model.historyActionsEnabled,
+            previewVisible: model.imagePreview != nil
+        ) else { return false }
+        // Holding Backspace must not erase the rest of the list.
+        guard !isRepeat else { return true }
+        DispatchQueue.main.async {
+            guard self.model.overlayVisible, !self.model.titleEditing, self.model.historyActionsEnabled else { return }
+            switch action {
+            case .delete:
+                if self.model.imagePreview == nil, let entry = self.model.selectedEntry {
+                    self.model.delete(entry)
+                }
+            case .toggleImagePreview:
+                self.model.toggleImagePreview()
+            case .closeImagePreview:
+                self.model.imagePreview = nil
+            case .ignore:
+                break
+            }
+        }
+        return true
+    }
+
     private func handlePanelHotkeyFromEventTap() {
         guard !shouldPassThroughPanelHotkey(), !ignoreNextPasteShortcut else { return }
         if panel?.isVisible == true, let lastPasteShortcutAt, Date().timeIntervalSince(lastPasteShortcutAt) < 0.7 {
             self.lastPasteShortcutAt = nil
-            model.markDoublePasteUsed()
             pasteCurrentClipboardIgnoringNext()
             return
         }
@@ -3502,7 +3609,11 @@ struct ClipboardOverlayView: View {
                 }
                 toolbar
                 Divider().opacity(0.2)
-                if showingGroupList {
+                if let preview = model.imagePreview {
+                    ImagePreviewView(preview: preview, tooltip: $tooltip) {
+                        model.imagePreview = nil
+                    }
+                } else if showingGroupList {
                     groupListPage
                         .transition(.opacity)
                 } else {
@@ -3519,10 +3630,6 @@ struct ClipboardOverlayView: View {
                 y: 10
             )
 
-            if model.shouldShowDoublePasteHint {
-                doublePasteHint
-                    .offset(y: -46)
-            }
         }
         .frame(width: panelWidth, height: panelHeight)
         .coordinateSpace(name: "panel")
@@ -3574,6 +3681,15 @@ struct ClipboardOverlayView: View {
                 resetPanelPresentation()
             }
         }
+        .onChange(of: showingAddGroup) { _, _ in
+            model.historyActionsEnabled = !showingAddGroup && !showingGroupList
+        }
+        .onChange(of: showingGroupList) { _, _ in
+            model.historyActionsEnabled = !showingAddGroup && !showingGroupList
+            model.imagePreview = nil
+        }
+        .onChange(of: model.activeTab) { _, _ in model.imagePreview = nil }
+        .onChange(of: model.activeGroupID) { _, _ in model.imagePreview = nil }
         .padding(.leading, PanelMetrics.sideMargin)
         .padding(.trailing, PanelMetrics.sideMargin)
         .padding(.top, PanelMetrics.topMargin)
@@ -3668,34 +3784,6 @@ struct ClipboardOverlayView: View {
         .background(Color.orange.opacity(effectiveColorScheme == .dark ? 0.18 : 0.12))
     }
 
-    private var doublePasteHint: some View {
-        HStack {
-            HStack(spacing: 8) {
-                Image(systemName: "command")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(panelThemeColors.secondaryText)
-                Text(L10n.doublePasteTip(model.settings.pastePanelHotkey.displayText))
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(panelThemeColors.secondaryText)
-                Spacer()
-                Button(L10n.neverShow) {
-                    model.dismissDoublePasteHint()
-                }
-                .buttonStyle(.plain)
-                .font(.caption)
-                .foregroundStyle(panelThemeColors.secondaryText)
-                .cursor(.pointingHand)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
-            .background(panelThemeColors.fill?.opacity(effectiveColorScheme == .dark ? 0.24 : 0.48) ?? (effectiveColorScheme == .dark ? Color.white.opacity(0.075) : Color.white.opacity(0.72)))
-            .clipShape(Capsule())
-            .overlay(Capsule().stroke(borderColor, lineWidth: 1))
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-    }
-
     private var toolbar: some View {
         HStack(spacing: 6) {
             toolbarTabsScroller
@@ -3757,7 +3845,7 @@ struct ClipboardOverlayView: View {
                     }
                 }
             }
-            .padding(.bottom, 4)
+            .padding(.vertical, 2)
             .background(
                 GeometryReader { proxy in
                     Color.clear
@@ -4057,6 +4145,7 @@ struct ClipboardOverlayView: View {
             favorited: model.isFavorite(entry),
             draggable: canReorderItems,
             selected: entry.id == model.selectedEntry?.id,
+            canPreviewImage: model.canPreviewImage(entry),
             editing: editingTitleID == entry.id,
             isCurrentClipboardItem: entry.signature == model.currentClipboardSignature,
             commandShortcutIndex: commandShortcutIndex,
@@ -4076,6 +4165,9 @@ struct ClipboardOverlayView: View {
             },
             onDelete: {
                 model.delete(entry)
+            },
+            onPreview: {
+                showImagePreview(for: entry)
             },
             onPin: {
                 model.togglePin(entry)
@@ -4101,6 +4193,14 @@ struct ClipboardOverlayView: View {
         editingTitleID = entry.id
         editingTitle = entry.title
         model.titleEditing = true
+    }
+
+    private func showImagePreview(for entry: ClipboardEntry) {
+        if let editingTitleID, let editingEntry = model.history.first(where: { $0.id == editingTitleID }) {
+            commitEditingTitle(for: editingEntry)
+        }
+        tooltip = nil
+        model.showImagePreview(for: entry)
     }
 
     private func commitEditingTitle(for entry: ClipboardEntry) {
@@ -4135,6 +4235,11 @@ struct ClipboardOverlayView: View {
 
     @ViewBuilder
     private func rowContextMenu(_ entry: ClipboardEntry) -> some View {
+        if model.canPreviewImage(entry) {
+            Button(L10n.previewImage) {
+                showImagePreview(for: entry)
+            }
+        }
         Button(L10n.paste) {
             model.paste(entry, using: controller)
         }
@@ -4170,12 +4275,74 @@ struct ClipboardOverlayView: View {
     }
 }
 
+struct ImagePreviewView: View {
+    let preview: ClipboardImagePreview
+    @Binding var tooltip: TooltipState?
+    let onClose: () -> Void
+    @Environment(\.panelThemeColors) private var theme
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10n.previewImage)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(theme.primaryText)
+                    Text(preview.title)
+                        .font(.system(size: 12))
+                        .foregroundStyle(theme.secondaryText)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 8)
+                IconButton(symbol: "xmark", help: L10n.closeImagePreview, tooltip: $tooltip, action: onClose)
+            }
+            Group {
+                if let image = preview.image {
+                    Image(nsImage: image)
+                        .resizable()
+                        .interpolation(.high)
+                        .scaledToFit()
+                        .padding(12)
+                        .accessibilityLabel(preview.title)
+                } else {
+                    VStack(spacing: 8) {
+                        Image(systemName: "photo")
+                            .font(.system(size: 28, weight: .regular))
+                        Text(L10n.imagePreviewUnavailable)
+                            .font(.system(size: 13, weight: .semibold))
+                        Text(L10n.imagePreviewUnavailableDetail)
+                            .font(.system(size: 12))
+                            .multilineTextAlignment(.center)
+                    }
+                    .foregroundStyle(theme.secondaryText)
+                    .padding(20)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(theme.tertiaryFill ?? Color.primary.opacity(0.035))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(theme.secondaryText.opacity(0.12), lineWidth: 1)
+            }
+            if let representation = preview.image?.representations.first {
+                Text("\(representation.pixelsWide) × \(representation.pixelsHigh)")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundStyle(theme.secondaryText)
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
 struct HistoryRow: View {
     let entry: ClipboardEntry
     let activeTab: ClipTab
     let favorited: Bool
     let draggable: Bool
     let selected: Bool
+    let canPreviewImage: Bool
     let editing: Bool
     let isCurrentClipboardItem: Bool
     let commandShortcutIndex: Int?
@@ -4186,6 +4353,7 @@ struct HistoryRow: View {
     let onSelect: () -> Void
     let onPaste: () -> Void
     let onDelete: () -> Void
+    let onPreview: () -> Void
     let onPin: () -> Void
     let onFavorite: () -> Void
     let groups: [CustomGroup]
@@ -4253,10 +4421,13 @@ struct HistoryRow: View {
                         if isCurrentClipboardItem {
                             deleteButtonPlaceholder
                         } else {
-                            IconButton(symbol: "xmark", help: L10n.delete, compact: true, quiet: true, tooltip: $tooltip, action: onDelete)
+                            IconButton(symbol: "xmark", help: L10n.deleteShortcut, compact: true, quiet: true, tooltip: $tooltip, action: onDelete)
                         }
                     }
                     HStack(spacing: 3) {
+                        if canPreviewImage {
+                            IconButton(symbol: "arrow.up.left.and.arrow.down.right", help: L10n.previewImageShortcut, compact: true, tooltip: $tooltip, action: onPreview)
+                        }
                         if canPin {
                             IconButton(
                                 symbol: entry.pinnedTabs.contains(activeTab) ? "pin.fill" : "pin",
@@ -4406,7 +4577,13 @@ struct HistoryRow: View {
                     .font(.system(size: 12))
                     .foregroundStyle(theme.itemSecondary ?? Color.secondary)
                     .lineLimit(1)
-                imageThumbnail
+                Button(action: onPreview) {
+                    imageThumbnail
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L10n.previewImage)
+                .onHoverTooltip(L10n.previewImageShortcut, tooltip: $tooltip)
+                .cursor(.pointingHand)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
@@ -4873,6 +5050,7 @@ struct IconButton: View {
         }
         .buttonStyle(.plain)
         .onHoverTooltip(help, tooltip: $tooltip)
+        .accessibilityLabel(help)
         .cursor(.pointingHand)
     }
 

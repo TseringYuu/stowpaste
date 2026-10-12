@@ -1,12 +1,12 @@
 # StowPaste Distribution and App Store Readiness
 
-Last reviewed: 2026-09-08
+Last reviewed: 2026-10-12
 
 This document records the current release channel and the checks required before any future Mac App Store submission. It is a maintainer reference, not a claim that StowPaste is listed in the App Store.
 
 ## Current distribution decision
 
-- Current public version: `v0.1.2`.
+- Current public version: `v0.1.3`.
 - Supported platform: macOS 14 or later.
 - Architectures: Apple silicon and Intel.
 - Current public channel: versioned DMG download from `https://stowpaste.aiware.store`.
@@ -17,14 +17,14 @@ This document records the current release channel and the checks required before
 
 ## Direct-distribution status
 
-The published `v0.1.2` DMG has a verified SHA-256 checksum. The application bundle uses an identity-free ad-hoc signature, the disk image is not signed with a Developer ID identity, and the release has not been notarized. Replacing a previous ad-hoc build may require replacing the old Accessibility entry and reopening the app.
+The published `v0.1.3` DMG has a verified SHA-256 checksum. The application bundle uses an identity-free ad-hoc signature, the disk image is not signed with a Developer ID identity, and the release has not been notarized. Replacing a previous ad-hoc build may require replacing the old Accessibility entry and reopening the app.
 
 Before describing a future package as signed or notarized, verify all of the following against the exact public artifact:
 
 ```bash
-hdiutil verify StowPaste-v0.1.2.dmg
-spctl --assess --type open --context context:primary-signature --verbose StowPaste-v0.1.2.dmg
-shasum -a 256 StowPaste-v0.1.2.dmg
+hdiutil verify StowPaste-v0.1.3.dmg
+spctl --assess --type open --context context:primary-signature --verbose StowPaste-v0.1.3.dmg
+shasum -a 256 StowPaste-v0.1.3.dmg
 ```
 
 Direct-distribution build scripts:

@@ -7,7 +7,7 @@
   <p>一个安静待在菜单栏里的 macOS 剪贴板历史工具。复制文本、图片或文件，连续按两次左 Command，随时把它们找回来。</p>
 
   <p>
-    <img alt="StowPaste v0.1.2" src="https://img.shields.io/badge/release-v0.1.2-655DFF?style=for-the-badge">
+    <img alt="StowPaste v0.1.3" src="https://img.shields.io/badge/release-v0.1.3-655DFF?style=for-the-badge">
     <img alt="macOS 14 或更高版本" src="https://img.shields.io/badge/macOS-14%2B-1C1D21?style=for-the-badge&logo=apple&logoColor=white">
     <img alt="Apple silicon 与 Intel" src="https://img.shields.io/badge/build-Universal-18B981?style=for-the-badge">
     <img alt="数据保存在本机" src="https://img.shields.io/badge/data-local--first-F05A47?style=for-the-badge">
@@ -22,7 +22,7 @@
 </div>
 
 > [!IMPORTANT]
-> ### [↓ 下载 StowPaste v0.1.2（中文 DMG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.2/StowPaste-v0.1.2-zh-CN.dmg)
+> ### [↓ 下载 StowPaste v0.1.3（中文 DMG）](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.3/StowPaste-v0.1.3-zh-CN.dmg)
 > 适用于 macOS 14 或更高版本，兼容 Apple silicon 与 Intel Mac。无需账户。
 
 <p align="center">
@@ -32,7 +32,7 @@
   &nbsp;·&nbsp;
   <a href="https://stowpaste.aiware.store/privacy">隐私说明</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.2/StowPaste-v0.1.2-zh-CN.dmg.sha256">SHA-256</a>
+  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.3/StowPaste-v0.1.3-zh-CN.dmg.sha256">SHA-256</a>
 </p>
 
 ![StowPaste 官网与下载界面](docs/assets/readme-hero.png)
@@ -56,7 +56,7 @@
 
 ## 安装
 
-1. 下载并打开 [StowPaste v0.1.2 中文 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.2/StowPaste-v0.1.2-zh-CN.dmg)。
+1. 下载并打开 [StowPaste v0.1.3 中文 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.3/StowPaste-v0.1.3-zh-CN.dmg)。
 2. 将 `StowPaste.app` 拖到磁盘映像中的「应用程序」快捷方式上。
 3. 从「应用程序」启动 StowPaste；macOS 可能提示无法验证开发者。
 4. 打开「系统设置 → 隐私与安全性」，向下滚动到「安全性」，为 StowPaste 选择「仍要打开」，并按提示确认身份。
@@ -65,7 +65,7 @@
 辅助功能权限用于监听全局快捷键、恢复原来的输入焦点，以及把选中的内容粘贴回当前应用。
 
 > [!NOTE]
-> `v0.1.2` 是不使用付费 Apple Developer 账户的独立开源构建。应用本体使用不包含个人身份的 ad-hoc 签名，应用与磁盘映像未经 Developer ID 签名或 Apple 公证。请先检查源码与 SHA-256，再为 StowPaste 创建上述单应用例外；不要全局关闭 Gatekeeper。
+> `v0.1.3` 是不使用付费 Apple Developer 账户的独立开源构建。应用本体使用不包含个人身份的 ad-hoc 签名，应用与磁盘映像未经 Developer ID 签名或 Apple 公证。请先检查源码与 SHA-256，再为 StowPaste 创建上述单应用例外；不要全局关闭 Gatekeeper。
 >
 > 更新时请先退出正在运行的旧版本，再覆盖应用。如果「系统设置 → 隐私与安全性 → 辅助功能」里已经启用 StowPaste，但应用仍提示未授权，请删除旧的 StowPaste 条目，点 `+` 重新加入 `/Applications/StowPaste.app`，然后退出并重新打开 StowPaste。
 
@@ -75,7 +75,7 @@
 下载官方校验文件，或在终端执行：
 
 ```bash
-shasum -a 256 StowPaste-v0.1.2-zh-CN.dmg
+shasum -a 256 StowPaste-v0.1.3-zh-CN.dmg
 ```
 
 预期 SHA-256：
@@ -103,7 +103,8 @@ shasum -a 256 StowPaste-v0.1.2-zh-CN.dmg
 - 重命名难以辨认的历史项。
 - 新建自定义分组，编辑名称与图标，并调整分组顺序。
 - 将历史项拖到上方分组标签完成归类。
-- 删除不再需要的内容；当前剪贴板对应的历史项会受到保护，避免误删。
+- 选中历史项后按 Backspace 删除，选中位置会移到相邻记录；系统剪贴板和原始文件不受影响。当前剪贴板对应的历史项仍隐藏鼠标删除按钮。
+- 选中图片后按空格，或点击缩略图、预览按钮查看原图；再次按空格或 Esc 返回历史列表。编辑文字时不会触发这些快捷键。
 
 ### 调整工作方式
 

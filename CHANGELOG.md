@@ -4,6 +4,22 @@ All notable changes to StowPaste are documented here. This project follows seman
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-12
+
+### Added
+
+- Backspace deletes the selected history entry and keeps selection on an adjacent entry; holding the key does not delete additional entries.
+- Full-size image previews for clipboard images and image files, opened from the thumbnail, preview action, context menu, or Space, and closed with Space or Escape.
+
+### Changed
+
+- Removed the quick-paste hint and its saved settings while retaining the quick-paste shortcut.
+- Image previews reuse the clipboard panel's native materials, rounded surfaces, and system or custom theme.
+
+### Fixed
+
+- Vertically centered the scrollable toolbar tabs to align with the action buttons.
+
 ## [0.1.2] - 2026-09-08
 
 ### Added
@@ -61,9 +77,10 @@ Initial public release.
 
 ### Distribution note
 
-The current `v0.1.2` direct download is a DMG. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch. Replacing an existing build may require removing the old Accessibility entry and adding `/Applications/StowPaste.app` again.
+The current `v0.1.3` direct download is a DMG. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch. Replacing an existing build may require removing the old Accessibility entry and adding `/Applications/StowPaste.app` again.
 
-[Unreleased]: https://github.com/TseringYuu/stowpaste/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/TseringYuu/stowpaste/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/TseringYuu/stowpaste/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/TseringYuu/stowpaste/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/TseringYuu/stowpaste/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/TseringYuu/stowpaste/releases/tag/v0.1.0

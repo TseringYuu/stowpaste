@@ -21,7 +21,7 @@ const sections = [
   {
     title: "Install and authorize",
     body:
-      "StowPaste v0.1.2 is an open-source build that is not Developer ID signed or notarized by Apple. Open the DMG, drag StowPaste into Applications, then try to launch it. macOS may block the app once. Create a one-app exception only after reviewing the source and SHA-256 checksum.",
+      `StowPaste ${site.versionTag} is an open-source build that is not Developer ID signed or notarized by Apple. Open the DMG, drag StowPaste into Applications, then try to launch it. macOS may block the app once. Create a one-app exception only after reviewing the source and SHA-256 checksum.`,
     bullets: [
       "Open System Settings → Privacy & Security, scroll to Security, then choose Open Anyway for StowPaste.",
       "Choose Open Anyway, authenticate if prompted, and launch StowPaste from Applications. Never disable Gatekeeper globally.",
@@ -44,7 +44,9 @@ const sections = [
     body:
       "Text, images, and files are kept in one local history with tabs for each type and for favorites. Use the row actions to paste, favorite, pin, rename, or delete. Drag items into a custom group or reorder favorites to make a personal shelf.",
     bullets: [
-      "Images appear in their own Images tab for quick scanning.",
+      "Images appear in their own Images tab for quick scanning. Click a thumbnail or preview button, or select an image and press Space, to view the original without cropping. Press Space or Escape to return to history.",
+      "Press Backspace to delete the selected record. Selection moves to an adjacent record, and holding the key does not delete additional records. The system clipboard and source files are left intact.",
+      "Space and Backspace keep their normal input behavior while you edit a title. Image previews follow the same system or custom theme as the panel.",
       "Create groups with a name and icon, then reorder or edit them later.",
       "Pinned and favorited items are protected from automatic retention cleanup."
     ]
