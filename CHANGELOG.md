@@ -1,21 +1,21 @@
 # Changelog
 
+All notable changes to StowPaste are documented here. This project follows semantic versioning.
+
+## [Unreleased]
+
 ## [0.1.4] - 2026-10-14
 
 ### Fixed
 
 - Removed per-record publication of the entire history during selection and paste. Saving a 2,000-record history previously emitted 2,001 list updates; an ordinary selection or paste now emits one.
-- Resolve the selected record once per rendered list instead of repeatedly filtering and sorting history for every row.
-- Mark injected Command-V events so delayed delivery cannot retrigger the panel shortcut after the temporary suppression expires.
-- Persist legacy favorite-pin migration immediately and publish only actual changes.
+- Resolved the selected record once per rendered list instead of repeatedly filtering and sorting history for every row.
+- Marked injected Command-V events so delayed delivery cannot retrigger the panel shortcut after the temporary suppression expires.
+- Persisted legacy favorite-pin migration immediately and published only actual changes.
 
 ### Verification
 
 - Added isolated text-paste and migration regressions plus a mounted-panel stress check with a 512 MiB RSS / 60 second watchdog. The reported system-wide OOM was not reproduced in the isolated scenario; these fixes remove confirmed update amplification and a delayed shortcut reentry risk.
-
-All notable changes to StowPaste are documented here. This project follows semantic versioning.
-
-## [Unreleased]
 
 ## [0.1.3] - 2026-10-12
 
@@ -89,11 +89,12 @@ Initial public release.
 - Universal Apple silicon and Intel build tooling.
 - Apache License 2.0 source release, contribution guide, security policy, and third-party notices.
 
-### Distribution note
+## Distribution note
 
-The current `v0.1.3` direct download is a DMG. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch. Replacing an existing build may require removing the old Accessibility entry and adding `/Applications/StowPaste.app` again.
+The current `v0.1.4` direct download is a DMG. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed, and the release is not notarized. macOS may require confirmation in System Settings → Privacy & Security on first launch. Replacing an existing build may require removing the old Accessibility entry and adding `/Applications/StowPaste.app` again.
 
-[Unreleased]: https://github.com/TseringYuu/stowpaste/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/TseringYuu/stowpaste/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/TseringYuu/stowpaste/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/TseringYuu/stowpaste/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/TseringYuu/stowpaste/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/TseringYuu/stowpaste/compare/v0.1.0...v0.1.1
