@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.4] - 2026-10-14
+
+### Fixed
+
+- Removed per-record publication of the entire history during selection and paste. Saving a 2,000-record history previously emitted 2,001 list updates; an ordinary selection or paste now emits one.
+- Resolve the selected record once per rendered list instead of repeatedly filtering and sorting history for every row.
+- Mark injected Command-V events so delayed delivery cannot retrigger the panel shortcut after the temporary suppression expires.
+- Persist legacy favorite-pin migration immediately and publish only actual changes.
+
+### Verification
+
+- Added isolated text-paste and migration regressions plus a mounted-panel stress check with a 512 MiB RSS / 60 second watchdog. The reported system-wide OOM was not reproduced in the isolated scenario; these fixes remove confirmed update amplification and a delayed shortcut reentry risk.
+
 All notable changes to StowPaste are documented here. This project follows semantic versioning.
 
 ## [Unreleased]

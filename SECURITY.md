@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Security fixes target the latest public release, currently `v0.1.3`. Update to that release before reporting a problem that has already been fixed.
+Security fixes target the latest public release, currently `v0.1.4`. Update to that release before reporting a problem that has already been fixed.
 
 ## Reporting a Vulnerability
 

@@ -7,7 +7,7 @@
   <p>A quiet macOS clipboard history utility that lives in the menu bar. Copy text, images, or files, then tap the left Command key twice to bring them back.</p>
 
   <p>
-    <img alt="StowPaste v0.1.3" src="https://img.shields.io/badge/release-v0.1.3-655DFF?style=for-the-badge">
+    <img alt="StowPaste v0.1.4" src="https://img.shields.io/badge/release-v0.1.4-655DFF?style=for-the-badge">
     <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-1C1D21?style=for-the-badge&logo=apple&logoColor=white">
     <img alt="Apple silicon and Intel" src="https://img.shields.io/badge/build-Universal-18B981?style=for-the-badge">
     <img alt="Data stays local" src="https://img.shields.io/badge/data-local--first-F05A47?style=for-the-badge">
@@ -22,7 +22,7 @@
 </div>
 
 > [!IMPORTANT]
-> ### [↓ Download StowPaste v0.1.3 (DMG)](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.3/StowPaste-v0.1.3.dmg)
+> ### [↓ Download StowPaste v0.1.4 (DMG)](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.4/StowPaste-v0.1.4.dmg)
 > For macOS 14 or later on Apple silicon and Intel Macs. No account required.
 
 <p align="center">
@@ -32,7 +32,7 @@
   &nbsp;·&nbsp;
   <a href="https://stowpaste.aiware.store/privacy">Privacy</a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.3/StowPaste-v0.1.3.dmg.sha256">SHA-256</a>
+  <a href="https://github.com/TseringYuu/stowpaste/releases/download/v0.1.4/StowPaste-v0.1.4.dmg.sha256">SHA-256</a>
 </p>
 
 ![StowPaste website and download screen](docs/assets/readme-hero.png)
@@ -56,7 +56,7 @@
 
 ## Install
 
-1. Download and open the [StowPaste v0.1.3 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.3/StowPaste-v0.1.3.dmg).
+1. Download and open the [StowPaste v0.1.4 DMG](https://github.com/TseringYuu/stowpaste/releases/download/v0.1.4/StowPaste-v0.1.4.dmg).
 2. Drag `StowPaste.app` onto the Applications shortcut in the disk image.
 3. Launch StowPaste from Applications. macOS may say it cannot verify the developer.
 4. Open System Settings → Privacy & Security, scroll to Security, and choose **Open Anyway** for StowPaste. Authenticate if prompted.
@@ -65,7 +65,7 @@
 Accessibility permission lets StowPaste listen for the global shortcut, restore the previous input focus, and paste the selected item into the active app.
 
 > [!NOTE]
-> `v0.1.3` is an independent open-source build that does not use a paid Apple Developer account. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed or notarized by Apple. Review the source and checksum before creating the one-app exception above. Never disable Gatekeeper globally.
+> `v0.1.4` is an independent open-source build that does not use a paid Apple Developer account. The application uses an identity-free ad-hoc signature; the app and disk image are not Developer ID signed or notarized by Apple. Review the source and checksum before creating the one-app exception above. Never disable Gatekeeper globally.
 >
 > When updating, quit the currently running copy before replacing it. If System Settings shows StowPaste enabled under Accessibility but the app still asks for permission, remove the old StowPaste entry, add `/Applications/StowPaste.app` again with the `+` button, then quit and reopen StowPaste.
 
@@ -75,13 +75,13 @@ Accessibility permission lets StowPaste listen for the global shortcut, restore 
 Download the official checksum file or run:
 
 ```bash
-shasum -a 256 StowPaste-v0.1.3.dmg
+shasum -a 256 StowPaste-v0.1.4.dmg
 ```
 
 Expected SHA-256:
 
 ```text
-0a804ad5fa08cde2215847afaab87fec1836b9c08bfe5f5346650792724f8e9c
+542075dc97f76987cdcdf947d81a7529a58a58624fe9e925ef4cbc06f9cfaa5b
 ```
 
 </details>

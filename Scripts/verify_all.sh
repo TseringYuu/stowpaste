@@ -33,5 +33,6 @@ source "$(cd "$(dirname "$0")" && pwd)/lib/paths.sh"
 
 swift build --package-path "$APP_PACKAGE_DIR" ${SWIFT_BUILD_FLAGS:-}
 swift test --package-path "$APP_PACKAGE_DIR" ${SWIFT_BUILD_FLAGS:-}
+"$ROOT/Scripts/verify_paste_memory.sh"
 
 echo "all checks passed"

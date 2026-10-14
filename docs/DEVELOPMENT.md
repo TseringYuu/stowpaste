@@ -74,7 +74,7 @@ The current release channel is the versioned DMG published on `stowpaste.aiware.
 
 Generated artifacts are written to `dist/` and must not be committed from that directory. The website's public download must be copied from the final verified artifact and accompanied by its SHA-256 file.
 
-The published `v0.1.3` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
+The published `v0.1.4` disk images are independent open-source builds: the app uses identity-free ad-hoc signing, and the app and DMGs are not Developer ID signed or notarized. Do not describe a future package as signed or notarized without checking the exact artifact.
 
 ### Static website deployment
 
@@ -99,12 +99,16 @@ The suite covers Swift build and tests, global shortcuts, focus restoration, pan
 
 The current Swift Testing suite includes shortcut modifier/input protection, adjacent selection after deletion, persisted favorite/group cleanup, original-image loading, missing-file preview behavior, and removal of retired hint settings. For visual QA, the panel smoke mode can stay open with `STOWPASTE_PANEL_SMOKE_TEST_KEEP_OPEN=1`; always provide a separate `STOWPASTE_APPLICATION_SUPPORT_DIR` so the test does not write to a user's history.
 
+Paste regressions also cover a 2,000-record text history, constant publication counts during selection and paste, persisted/idempotent legacy favorite migration, and synthetic paste-event identity after delayed delivery. `Scripts/verify_paste_memory.sh` runs 30 selection/paste cycles against a mounted offscreen SwiftUI panel and a named test pasteboard. It monitors the test process tree (including SwiftPM children in separate process groups), terminating it above 512 MiB RSS or after 60 seconds; it never posts paste shortcuts to another application or changes the general pasteboard. Python 3 is required for this watchdog. The complete suite includes this check.
+
+To exercise an existing local history, set `STOWPASTE_PASTE_MEMORY_FIXTURE` to an absolute `state.json` path when running that script. The test copies the state and its adjacent `Images` directory into temporary storage and runs against that copy. The watchdog owns and removes that storage, including after a memory/time limit termination. It does not log clipboard contents or modify the source history.
+
 Before a release, also inspect the package directly:
 
 ```bash
-hdiutil verify packages/website/public/downloads/StowPaste-v0.1.3.dmg
-hdiutil verify packages/website/public/downloads/StowPaste-v0.1.3-zh-CN.dmg
-shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.3*.dmg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.4.dmg
+hdiutil verify packages/website/public/downloads/StowPaste-v0.1.4-zh-CN.dmg
+shasum -a 256 packages/website/public/downloads/StowPaste-v0.1.4*.dmg
 ```
 
 ## Product and network rules

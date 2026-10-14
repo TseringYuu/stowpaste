@@ -1,9 +1,164 @@
 import AppKit
+import Combine
+import Darwin
 import Foundation
+import SwiftUI
 import Testing
 @testable import StowPaste
 
 struct CurrentBuildTests {
+    @Test
+    func testInjectedPasteEventsRemainRecognizableAfterDelayedDelivery() throws {
+        let events = PasteShortcutEvents.make()
+        #expect(events.count == 4)
+        #expect(events.map { $0.getIntegerValueField(.keyboardEventKeycode) } == [0x37, 0x09, 0x09, 0x37])
+        #expect(events.map(\.type) == [.flagsChanged, .keyDown, .keyUp, .flagsChanged])
+        for event in events {
+            let delivered = try #require(event.copy())
+            delivered.timestamp += 5_000_000_000
+            #expect(PasteShortcutEvents.isOwnEvent(delivered))
+        }
+        let physical = try #require(CGEvent(keyboardEventSource: nil, virtualKey: 0x09, keyDown: true))
+        physical.flags = .maskCommand
+        #expect(!PasteShortcutEvents.isOwnEvent(physical))
+        #expect(events[1].flags == .maskCommand)
+        #expect(events[2].flags == .maskCommand)
+    }
+
+    @MainActor
+    @Test
+    func testLargeTextHistorySelectionAndPastePublishOnlyChangedRecords() throws {
+        let directory = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let stateURL = directory.appendingPathComponent("state.json")
+        let model = AppModel(storeURL: stateURL, startPolling: false, pasteboard: pasteboard)
+        model.history = (0..<2_000).map { entry(index: $0) }
+        model.favoriteOrder = [model.history[1].id]
+        let selected = model.history[1_000]
+        var historyUpdates = 0
+        var favoriteUpdates = 0
+        let historyObserver = model.$history.dropFirst().sink { _ in historyUpdates += 1 }
+        let favoriteObserver = model.$favoriteOrder.dropFirst().sink { _ in favoriteUpdates += 1 }
+        defer {
+            historyObserver.cancel()
+            favoriteObserver.cancel()
+        }
+
+        model.select(selected)
+        #expect(historyUpdates == 1)
+        #expect(favoriteUpdates == 0)
+        historyUpdates = 0
+        model.paste(selected, using: nil)
+        #expect(historyUpdates == 1)
+        #expect(favoriteUpdates == 0)
+        #expect(pasteboard.string(forType: .string) == selected.text)
+        model.refreshClipboard()
+        #expect(model.history.count == 2_000)
+        #expect(historyUpdates == 1)
+        let restored = AppModel(storeURL: stateURL, startPolling: false, pasteboard: pasteboard)
+        #expect(restored.history.count == 2_000)
+        #expect(restored.selectedID == selected.id)
+        #expect(restored.favoriteOrder == [model.history[1].id])
+    }
+
+    @MainActor
+    @Test
+    func testLegacyFavoriteMigrationIsPersistedAndIdempotent() throws {
+        let directory = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let stateURL = directory.appendingPathComponent("state.json")
+        var entries = (0..<400).map { entry(index: $0) }
+        for index in entries.indices where index.isMultiple(of: 2) {
+            entries[index].pinnedTabs = [.favorites, .all]
+        }
+        let state = PersistedState(settings: AppSettings(), history: entries, activeTab: .all, selectedID: entries[0].id, lastSignature: "", favoriteOrder: [FavoriteOrderItem(id: entries[2].id, rank: 0), FavoriteOrderItem(id: UUID(), rank: 1)], customGroups: [])
+        try JSONEncoder().encode(state).write(to: stateURL)
+        let model = AppModel(storeURL: stateURL, startPolling: false)
+        let expectedOrder = [entries[2].id] + entries.enumerated().filter { $0.offset.isMultiple(of: 2) && $0.offset != 2 }.map { $0.element.id }
+        #expect(model.favoriteOrder == expectedOrder)
+        #expect(model.history.allSatisfy { !$0.pinnedTabs.contains(.favorites) })
+        #expect(model.history[0].pinnedTabs == [.all])
+        let restored = AppModel(storeURL: stateURL, startPolling: false)
+        #expect(restored.history == model.history)
+        #expect(restored.favoriteOrder == expectedOrder)
+        let savedData = try Data(contentsOf: stateURL)
+        _ = AppModel(storeURL: stateURL, startPolling: false)
+        #expect(try Data(contentsOf: stateURL) == savedData)
+    }
+
+    @MainActor
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["STOWPASTE_PASTE_MEMORY_CHECK"] == "1"))
+    func testMountedPanelRemainsBoundedAcrossRepeatedTextPastes() async throws {
+        _ = NSApplication.shared
+        let directory: URL
+        if let workspace = ProcessInfo.processInfo.environment["STOWPASTE_PASTE_MEMORY_WORK_DIR"] {
+            directory = URL(fileURLWithPath: workspace)
+        } else {
+            directory = try temporaryDirectory()
+        }
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        let stateURL = directory.appendingPathComponent("state.json")
+        let fixture = ProcessInfo.processInfo.environment["STOWPASTE_PASTE_MEMORY_FIXTURE"]
+        if let fixture {
+            let source = URL(fileURLWithPath: fixture)
+            try FileManager.default.copyItem(at: source, to: stateURL)
+            let images = source.deletingLastPathComponent().appendingPathComponent("Images")
+            if FileManager.default.fileExists(atPath: images.path) {
+                try FileManager.default.copyItem(at: images, to: directory.appendingPathComponent("Images"))
+            }
+        }
+        let model = AppModel(storeURL: stateURL, startPolling: false, pasteboard: pasteboard)
+        if fixture == nil {
+            model.history = (0..<2_000).map { index in
+                var item = entry(index: index)
+                item.text = "Text \(index) " + String(repeating: "sample ", count: 100)
+                item.signature = "text:\(item.text!)"
+                return item
+            }
+        }
+        let initialCount = model.history.count
+        let textEntries = model.history.filter(\.isText)
+        #expect(!textEntries.isEmpty)
+        guard let first = textEntries.first else { return }
+        model.activeTab = .all
+        model.activeGroupID = nil
+        model.selectedID = first.id
+        let controller = AppController(model: model)
+        let hostingView = NSHostingView(rootView: ClipboardOverlayView(model: model, controller: controller).environmentObject(model.systemAppearance))
+        let window = NSWindow(contentRect: NSRect(x: -10_000, y: -10_000, width: 420, height: 580), styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.contentView = hostingView
+        window.orderFrontRegardless()
+        defer {
+            window.contentView = nil
+            window.close()
+        }
+        hostingView.layoutSubtreeIfNeeded()
+        try await Task.sleep(for: .milliseconds(50))
+        var historyUpdates = 0
+        let observer = model.$history.dropFirst().sink { _ in historyUpdates += 1 }
+        defer { observer.cancel() }
+        for index in 0..<30 {
+            let selected = textEntries[(index * 61) % textEntries.count]
+            model.select(selected)
+            model.paste(selected, using: nil)
+            model.refreshClipboard()
+            hostingView.layoutSubtreeIfNeeded()
+            try await Task.sleep(for: .milliseconds(20))
+            #expect(pasteboard.string(forType: .string) == selected.text)
+        }
+        #expect(historyUpdates == 60)
+        #expect(model.history.count == initialCount)
+        var usage = rusage()
+        #expect(getrusage(RUSAGE_SELF, &usage) == 0)
+        print("mounted panel: \(initialCount) records, 30 text pastes, peak RSS \(usage.ru_maxrss / 1_048_576) MiB")
+        #expect(usage.ru_maxrss < 512 * 1_048_576)
+    }
+
     @Test
     func testDefaultHotkeyIsDoubleCommand() {
         let hotkey = HotkeySettings()

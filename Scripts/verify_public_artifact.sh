@@ -41,6 +41,14 @@ verify_dmg() (
     echo "Missing: StowPaste.app in $dmg_name" >&2
     exit 1
   fi
+  local expected_version="${dmg_name#StowPaste-v}"
+  expected_version="${expected_version%.dmg}"
+  expected_version="${expected_version%-zh-CN}"
+  if [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist")" != "$expected_version" ]]; then
+    echo "Unexpected: application version does not match $dmg_name" >&2
+    exit 1
+  fi
+  codesign --verify --deep --strict "$app_path"
   if [[ ! -L "$mount_point/Applications" || "$(readlink "$mount_point/Applications")" != "/Applications" ]]; then
     echo "Missing: Applications shortcut in $dmg_name" >&2
     exit 1
@@ -76,7 +84,7 @@ verify_dmg() (
   fi
 )
 
-verify_dmg "StowPaste-v0.1.3.dmg"
-verify_dmg "StowPaste-v0.1.3-zh-CN.dmg"
+verify_dmg "StowPaste-v0.1.4.dmg"
+verify_dmg "StowPaste-v0.1.4-zh-CN.dmg"
 
 echo "public artifact checks passed"

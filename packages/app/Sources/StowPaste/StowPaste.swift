@@ -922,8 +922,8 @@ final class AppModel: ObservableObject {
     @Published var currentClipboardSignature: String?
     let systemAppearance = SystemAppearance()
 
-    private let pasteboard = NSPasteboard.general
-    private var changeCount = NSPasteboard.general.changeCount
+    private let pasteboard: NSPasteboard
+    private var changeCount: Int
     private var pendingSignature: String?
     private var pollTimer: Timer?
     private let storeURL: URL
@@ -931,8 +931,11 @@ final class AppModel: ObservableObject {
 
     init(
         storeURL overrideStoreURL: URL? = nil,
-        startPolling shouldStartPolling: Bool = true
+        startPolling shouldStartPolling: Bool = true,
+        pasteboard: NSPasteboard = .general
     ) {
+        self.pasteboard = pasteboard
+        changeCount = pasteboard.changeCount
         if let overrideStoreURL {
             storeURL = overrideStoreURL
             imageStoreDirectory = overrideStoreURL
@@ -1717,7 +1720,7 @@ final class AppModel: ObservableObject {
         favoriteOrder = (state.favoriteOrder ?? [])
             .sorted { $0.rank < $1.rank }
             .map(\.id)
-        migrateFavoritePins()
+        let migratedFavorites = migrateFavoritePins()
         if let persistedCustomGroups = state.customGroups {
             customGroups = persistedCustomGroups.filter { $0.id != Self.legacyDefaultImageGroupID }
         } else {
@@ -1725,25 +1728,37 @@ final class AppModel: ObservableObject {
         }
         let trimmedHistory = trimHistory()
         let migratedImages = migrateImagePayloadsToDisk()
-        if trimmedHistory || migratedImages || state.containedRemovedFeatureState {
+        if trimmedHistory || migratedImages || migratedFavorites || state.containedRemovedFeatureState {
             save()
         }
         pendingSignature = nil
     }
 
-    private func migrateFavoritePins() {
-        let pinnedFavoriteIDs = history
-            .filter { $0.pinnedTabs.contains(.favorites) }
-            .map(\.id)
-        for id in pinnedFavoriteIDs where !favoriteOrder.contains(id) {
-            favoriteOrder.append(id)
+    @discardableResult
+    private func migrateFavoritePins() -> Bool {
+        // Mutating @Published history once per entry copies the whole array and
+        // floods the mounted panel with updates, even when no legacy pin exists.
+        var migratedHistory = history
+        var migratedOrder = favoriteOrder
+        var historyChanged = false
+        for index in migratedHistory.indices where migratedHistory[index].pinnedTabs.contains(.favorites) {
+            let id = migratedHistory[index].id
+            if !migratedOrder.contains(id) {
+                migratedOrder.append(id)
+            }
+            migratedHistory[index].pinnedTabs.remove(.favorites)
+            historyChanged = true
         }
-        for index in history.indices {
-            history[index].pinnedTabs.remove(.favorites)
+        let validIDs = Set(history.map(\.id))
+        migratedOrder.removeAll { !validIDs.contains($0) }
+        let orderChanged = migratedOrder != favoriteOrder
+        if historyChanged {
+            history = migratedHistory
         }
-        favoriteOrder = favoriteOrder.filter { id in
-            history.contains { $0.id == id }
+        if orderChanged {
+            favoriteOrder = migratedOrder
         }
+        return historyChanged || orderChanged
     }
 
     private func save() {
@@ -2200,6 +2215,26 @@ enum PanelKeyboardActionPolicy {
     }
 }
 
+enum PasteShortcutEvents {
+    private static let marker: Int64 = 0x53544F5750415354
+
+    static func isOwnEvent(_ event: CGEvent) -> Bool {
+        event.getIntegerValueField(.eventSourceUserData) == marker
+    }
+
+    static func make() -> [CGEvent] {
+        let source = CGEventSource(stateID: .hidSystemState)
+        return [(0x37, true), (0x09, true), (0x09, false), (0x37, false)].compactMap { keyCode, keyDown in
+            guard let event = CGEvent(keyboardEventSource: source, virtualKey: CGKeyCode(keyCode), keyDown: keyDown) else { return nil }
+            if keyCode == 0x09 {
+                event.flags = .maskCommand
+            }
+            event.setIntegerValueField(.eventSourceUserData, value: marker)
+            return event
+        }
+    }
+}
+
 final class ClipboardPanel: NSPanel {
     weak var controller: AppController?
     private static let resizeHandleThickness: CGFloat = 14
@@ -2373,7 +2408,7 @@ enum PanelMetrics {
 
 @MainActor
 final class AppController: NSObject, NSApplicationDelegate {
-    let model = AppModel()
+    let model: AppModel
     private var panel: ClipboardPanel?
     private var settingsWindow: NSWindow?
     private var groupWindow: NSPanel?
@@ -2398,6 +2433,15 @@ final class AppController: NSObject, NSApplicationDelegate {
     private var historyRowRectByID: [UUID: CGRect] = [:]
     var headerInteractiveRects: [NSRect] {
         Array(headerInteractiveRectByID.values)
+    }
+
+    override convenience init() {
+        self.init(model: AppModel())
+    }
+
+    init(model: AppModel) {
+        self.model = model
+        super.init()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -2682,17 +2726,9 @@ final class AppController: NSObject, NSApplicationDelegate {
     }
 
     private func postPasteShortcut() {
-        let source = CGEventSource(stateID: .hidSystemState)
-        let commandDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true)
-        let vDown = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true)
-        let vUp = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
-        let commandUp = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
-        vDown?.flags = .maskCommand
-        vUp?.flags = .maskCommand
-        commandDown?.post(tap: .cghidEventTap)
-        vDown?.post(tap: .cghidEventTap)
-        vUp?.post(tap: .cghidEventTap)
-        commandUp?.post(tap: .cghidEventTap)
+        for event in PasteShortcutEvents.make() {
+            event.post(tap: .cghidEventTap)
+        }
     }
 
     private func resizePanel(from startFrame: NSRect, edge: PanelResizeEdge, delta: NSPoint) {
@@ -3348,6 +3384,9 @@ final class AppController: NSObject, NSApplicationDelegate {
             }
             return Unmanaged.passUnretained(event)
         }
+        // Delivery can lag beyond ignoreNextPasteShortcut's timeout. Never let
+        // our injected Command-V reopen the panel or trigger another paste.
+        guard !PasteShortcutEvents.isOwnEvent(event) else { return Unmanaged.passUnretained(event) }
         guard type == .keyDown || type == .flagsChanged else { return Unmanaged.passUnretained(event) }
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
 
@@ -4077,6 +4116,7 @@ struct ClipboardOverlayView: View {
     private var historyList: some View {
         ScrollViewReader { proxy in
             let visibleItems = items
+            let selectedID = visibleItems.first { $0.id == model.selectedID }?.id ?? visibleItems.first?.id
             let commandShortcutIndexes = commandShortcutIndexes(for: visibleItems)
             let canReorderItems = model.activeTab == .favorites || model.activeGroupID != nil
             let favoriteReorderEnabled = model.activeGroupID == nil && model.activeTab == .favorites
@@ -4091,6 +4131,7 @@ struct ClipboardOverlayView: View {
                         ForEach(visibleItems) { entry in
                             historyRowView(
                                 entry,
+                                selected: entry.id == selectedID,
                                 canReorderItems: canReorderItems,
                                 favoriteReorderEnabled: favoriteReorderEnabled,
                                 commandShortcutIndex: model.panelPinned ? nil : commandShortcutIndexes[entry.id]
@@ -4135,6 +4176,7 @@ struct ClipboardOverlayView: View {
 
     private func historyRowView(
         _ entry: ClipboardEntry,
+        selected: Bool,
         canReorderItems: Bool,
         favoriteReorderEnabled: Bool,
         commandShortcutIndex: Int?
@@ -4144,7 +4186,7 @@ struct ClipboardOverlayView: View {
             activeTab: model.activeTab,
             favorited: model.isFavorite(entry),
             draggable: canReorderItems,
-            selected: entry.id == model.selectedEntry?.id,
+            selected: selected,
             canPreviewImage: model.canPreviewImage(entry),
             editing: editingTitleID == entry.id,
             isCurrentClipboardItem: entry.signature == model.currentClipboardSignature,

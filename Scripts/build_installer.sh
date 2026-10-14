@@ -3,8 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DISPLAY_NAME="StowPaste"
-APP_VERSION="0.1.3"
-PKG_VERSION="0.1.3"
+APP_VERSION="0.1.4"
+PKG_VERSION="0.1.4"
 DIST_DIR="$ROOT_DIR/dist"
 APP_DIR="$DIST_DIR/$DISPLAY_NAME.app"
 PKG_ROOT="$DIST_DIR/pkg-root"
